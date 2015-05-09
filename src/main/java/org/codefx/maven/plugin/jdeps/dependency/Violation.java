@@ -1,7 +1,8 @@
 package org.codefx.maven.plugin.jdeps.dependency;
 
+import static java.util.stream.Collectors.joining;
+
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -83,8 +84,20 @@ public class Violation {
 		String dependencies = internalDependencies
 				.stream()
 				.map(Object::toString)
-				.collect(Collectors.joining(", ", "{", "}"));
+				.collect(joining(", ", "{", "}"));
 		return type + " -> " + dependencies;
+	}
+
+	/**
+	 * @return a string representation of a violation which spans multiple lines
+	 */
+	public String toMultiLineString() {
+		String typeLine = ".\t" + type + "\n";
+		String dependencyLineStart = ".\t\t -> ";
+		return typeLine
+				+ internalDependencies.stream()
+						.map(Object::toString)
+						.collect(joining("\n" + dependencyLineStart, dependencyLineStart, ""));
 	}
 
 	// #end EQUALS, HASHCODE, TOSTRING
