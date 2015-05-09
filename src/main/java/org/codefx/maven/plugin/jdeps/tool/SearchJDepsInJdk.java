@@ -1,4 +1,4 @@
-package org.codefx.maven.plugin.jdeps.search;
+package org.codefx.maven.plugin.jdeps.tool;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,16 +23,16 @@ public class SearchJDepsInJdk {
 	 */
 	public Optional<Path> search(Path jdkHome) {
 		Path jdkBin = jdkHome.resolve("bin");
-		Path jdeps = jdkBin.resolve(jdepsFileName());
+		Path jDeps = jdkBin.resolve(jDepsFileName());
 
-		return Files.isRegularFile(jdeps)
-				? Optional.of(jdeps)
+		return Files.isRegularFile(jDeps)
+				? Optional.of(jDeps)
 				: Optional.empty();
 	}
 
-	private static String jdepsFileName() {
-		String jdepsExecutable = "jdeps" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : "");
-		return jdepsExecutable;
+	private static String jDepsFileName() {
+		String jDepsExecutable = "jdeps" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : "");
+		return jDepsExecutable;
 	}
 
 }
