@@ -1,8 +1,32 @@
 # JDeps Maven Plugin
 
-This plugin aims at including [JDeps](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jdeps.html) in a Maven build. The primary goal is to break the build if a dependency on [JDK-internal API](https://wiki.openjdk.java.net/display/JDK8/Java+Dependency+Analysis+Tool) is discovered.
+This Maven plugin employs [JDeps](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jdeps.html) to fail a build when dependencies on [JDK-internal APIs](https://wiki.openjdk.java.net/display/JDK8/Java+Dependency+Analysis+Tool) are discovered.
 
-The secondary goal is to teach myself how to create a Maven plugin. So this is very much a work in progress... 
+With Java 9 ([scheduled for 09/2016](http://mail.openjdk.java.net/pipermail/jdk9-dev/2015-May/002172.html)) such APIs [will become unavailable](http://blog.codefx.org/java/dev/how-java-9-and-project-jigsaw-may-break-your-code/), which may break a project. This plugin can help to avoid that. Running `jdeps -jdkinternals` against the compiled classes it will discover dependencies on internal APIs and break the build if any are found. This makes it easier to transition to Java 9.
+
+The next important step is to implement [*#1 Allow to Ignore Known Dependencies*](https://github.com/CodeFX-org/JDeps-Maven-Plugin/issues/1). It would allow to specify a list of known dependencies which will not break the build - thus enabling a step by step transition while preventing undetected relapses.
+
+## Documentation
+
+Add this to the project's `pom.xml`:
+
+```
+<groupId>org.codefx.maven.plugin</groupId>
+<artifactId>jdeps-maven-plugin</artifactId>
+<version>0.1</version>
+<executions>
+	<execution>
+		<goals>
+			<goal>jdkinternals</goal>
+		</goals>
+	</execution>
+</executions>
+```
+
+The plugin is fairly simple and currently neither requires nor allows any further configuration.
+
+It will run during the `verify` [phase](https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html), so it can be started with `mvn verify` (or above). It can be run directly with  `mvn jdeps:jdkinternals`.
+
 
 ## Other Such Plugins
 
