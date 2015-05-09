@@ -1,4 +1,4 @@
-package org.codefx.maven.plugin.jdeps.find;
+package org.codefx.maven.plugin.jdeps.search;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

@@ -1,8 +1,9 @@
-package org.codefx.maven.plugin.jdeps.find;
+package org.codefx.maven.plugin.jdeps.search;
 
 import java.nio.file.Path;
 import java.util.Optional;
 
+import org.codefx.maven.plugin.jdeps.search.JavaHomeEnvironmentVariableJDepsSearch;
 import org.junit.Test;
 
 /**
