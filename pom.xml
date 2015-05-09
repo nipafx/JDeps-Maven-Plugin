@@ -133,6 +133,12 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<!-- This is required for lambda expressions to work -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<version>3.3</version>
+			</plugin>
+			<plugin>
 				<!-- be aware of the Maven Toolchain -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-toolchains-plugin</artifactId>
