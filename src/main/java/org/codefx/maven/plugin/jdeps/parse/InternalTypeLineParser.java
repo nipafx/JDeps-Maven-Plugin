@@ -13,7 +13,7 @@ import org.codefx.maven.plugin.jdeps.dependency.InternalType;
  * Such lines must generally be of the following form:
  *
  * <pre>
- *       -> package.name.ClassName     category (source)
+ *       -&gt; package.name.ClassName     category (source)
  * </pre>
  */
 public class InternalTypeLineParser {
