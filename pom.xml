@@ -6,7 +6,7 @@
 
 	<groupId>org.codefx.maven.plugin</groupId>
 	<artifactId>jdeps-maven-plugin</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<packaging>maven-plugin</packaging>
 
 	<!-- PROJECT META INFORMATION -->
@@ -24,7 +24,6 @@
 		<url>https://github.com/CodeFX-org/JDeps-Maven-Plugin/issues</url>
 		<system>GitHub</system>
 	</issueManagement>
-
 
 	<distributionManagement>
 		<snapshotRepository>
