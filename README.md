@@ -11,16 +11,24 @@ The next important step is to implement [*#1 Allow to Ignore Known Dependencies*
 Add this to the project's `pom.xml`:
 
 ```xml
-<groupId>org.codefx.maven.plugin</groupId>
-<artifactId>jdeps-maven-plugin</artifactId>
-<version>0.1</version>
-<executions>
-	<execution>
-		<goals>
-			<goal>jdkinternals</goal>
-		</goals>
-	</execution>
-</executions>
+<build>
+	<plugins>
+		...
+		<plugin>
+			<groupId>org.codefx.maven.plugin</groupId>
+			<artifactId>jdeps-maven-plugin</artifactId>
+			<version>0.1</version>
+			<executions>
+				<execution>
+					<goals>
+						<goal>jdkinternals</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+		...
+	</plugins>
+</build>
 ```
 
 The plugin is fairly simple and currently neither requires nor allows any further configuration.
