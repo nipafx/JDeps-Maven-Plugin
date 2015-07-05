@@ -90,11 +90,7 @@ public class Type {
 
 	@Override
 	public final int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Objects.hash(packageName);
-		result = prime * result + Objects.hash(className);
-		return result;
+		return Objects.hash(packageName, className);
 	}
 
 	@Override
