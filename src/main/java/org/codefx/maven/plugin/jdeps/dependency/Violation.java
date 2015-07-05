@@ -109,6 +109,8 @@ public class Violation {
 		private final ImmutableList.Builder<InternalType> internalDependenciesBuilder;
 
 		private ViolationBuilder(Type type) {
+			Objects.requireNonNull(type, "The argument 'type' must not be null.");
+
 			this.type = type;
 			this.internalDependenciesBuilder = ImmutableList.builder();
 		}
@@ -118,9 +120,27 @@ public class Violation {
 		 *
 		 * @param dependency
 		 *            an internal type
+		 * @return this builder
 		 */
-		public void addDependency(InternalType dependency) {
+		public ViolationBuilder addDependency(InternalType dependency) {
+			Objects.requireNonNull(dependency, "The argument 'dependency' must not be null.");
+
 			internalDependenciesBuilder.add(dependency);
+			return this;
+		}
+
+		/**
+		 * Adds the specified {@link InternalType}s as dependencies.
+		 *
+		 * @param dependencies
+		 *            an iterable of internal types
+		 * @return this builder
+		 */
+		public ViolationBuilder addDependencies(Iterable<InternalType> dependencies) {
+			Objects.requireNonNull(dependencies, "The argument 'dependencies' must not be null.");
+
+			internalDependenciesBuilder.addAll(dependencies);
+			return this;
 		}
 
 		/**
