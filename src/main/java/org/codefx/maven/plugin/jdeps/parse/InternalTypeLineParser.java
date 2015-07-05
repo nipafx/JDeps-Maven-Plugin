@@ -16,7 +16,7 @@ import org.codefx.maven.plugin.jdeps.dependency.InternalType;
  *       -&gt; package.name.ClassName     category (source)
  * </pre>
  */
-public class InternalTypeLineParser {
+class InternalTypeLineParser {
 
 	private static final Pattern JDEPS_DEPENDENCY_PATTERN = Pattern.compile(""
 			+ "\\s+->\\s+" // leading spaces and arrow, e.g. "      -> "

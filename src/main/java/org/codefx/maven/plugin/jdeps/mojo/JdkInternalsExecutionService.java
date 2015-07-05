@@ -16,11 +16,11 @@ import com.google.common.collect.ImmutableList;
 /**
  * Orchestrates all bits and pieces which are needed to run "jdeps -jdkInternals" and parse the output.
  */
-public class JdkInternalsExecutionService {
+class JdkInternalsExecutionService {
 
 	/**
 	 * Executes jdeps.
-	 * 
+	 *
 	 * @param scannedFolder
 	 *            the folder to be scanned
 	 * @return a list of all violations
