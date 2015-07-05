@@ -26,9 +26,9 @@ public final class InternalType extends Type {
 	 * Returns an internal type for the specified arguments.
 	 *
 	 * @param packageName
-	 *            the name of the package containing the type
+	 *            the name of the package containing the type (dotted)
 	 * @param className
-	 *            the name of the type's class
+	 *            the name of the type's class (dotted)
 	 * @param category
 	 *            the category as reported by JDeps (e.g. "JDK internal API")
 	 * @param source

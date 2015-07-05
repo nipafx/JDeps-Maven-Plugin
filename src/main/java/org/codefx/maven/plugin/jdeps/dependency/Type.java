@@ -14,9 +14,9 @@ public class Type {
 	 * Creates a new type.
 	 *
 	 * @param packageName
-	 *            the name of the package containing the type
+	 *            the name of the package containing the type (dotted)
 	 * @param className
-	 *            the name of the type's class
+	 *            the name of the type's class (dotted)
 	 */
 	protected Type(String packageName, String className) {
 		Objects.requireNonNull(packageName, "The argument 'packageName' must not be null.");
