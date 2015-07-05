@@ -43,10 +43,18 @@ public class JdkInternalsMojo extends AbstractMojo {
 		}
 	}
 
-	private static void evaluateViolations(ImmutableList<Violation> violations) throws MojoExecutionException {
+	private void evaluateViolations(ImmutableList<Violation> violations) throws MojoExecutionException {
 		if (violations.isEmpty())
-			return;
+			logZeroDependencies();
+		else
+			failBuild(violations);
+	}
 
+	private void logZeroDependencies() {
+		getLog().info("JDeps reported no dependencies on JDK-internal APIs.");
+	}
+
+	private static void failBuild(ImmutableList<Violation> violations) throws MojoExecutionException {
 		String message = violations.stream()
 				.map(Violation::toMultiLineString)
 				.collect(joining("\n", "\nSome classes contain dependencies on JDK-internal API:\n", "\n\n"));
