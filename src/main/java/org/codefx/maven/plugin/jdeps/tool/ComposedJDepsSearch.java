@@ -9,7 +9,6 @@ import java.util.Optional;
 public class ComposedJDepsSearch implements JDepsSearch {
 
 	private final JavaHomeSystemPropertyJDepsSearch systemPropertySearch;
-
 	private final JavaHomeEnvironmentVariableJDepsSearch environmentVariableSearch;
 
 	/**

@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableList;
 public class Violation {
 
 	private final Type type;
-
 	private final ImmutableList<InternalType> internalDependencies;
 
 	private Violation(Type type, ImmutableList<InternalType> internalDependencies) {

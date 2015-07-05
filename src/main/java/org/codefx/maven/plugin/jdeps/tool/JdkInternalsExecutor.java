@@ -18,9 +18,7 @@ import org.codehaus.plexus.util.cli.Commandline;
 public class JdkInternalsExecutor {
 
 	private final Path jDepsExecutable;
-
 	private final Path pathToCheckedFiles;
-
 	private final Consumer<String> jDepsOutputConsumer;
 
 	/**

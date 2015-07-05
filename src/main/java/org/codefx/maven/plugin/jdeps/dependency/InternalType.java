@@ -11,7 +11,6 @@ import java.util.Objects;
 public final class InternalType extends Type {
 
 	private final String category;
-
 	private final String source;
 
 	private InternalType(String packageName, String className, String category, String source) {

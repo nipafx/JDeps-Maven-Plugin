@@ -8,7 +8,6 @@ import java.util.Objects;
 public class Type {
 
 	private final String packageName;
-
 	private final String className;
 
 	/**

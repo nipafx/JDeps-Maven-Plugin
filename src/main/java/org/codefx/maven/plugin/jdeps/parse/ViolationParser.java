@@ -31,9 +31,7 @@ public class ViolationParser {
 			+ ".*");
 
 	private final InternalTypeLineParser internalTypeLineParser;
-
 	private final Consumer<Violation> violationConsumer;
-
 	private LineParserState lineParser;
 
 	/**
