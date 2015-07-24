@@ -1,15 +1,18 @@
 package org.codefx.maven.plugin.jdeps.parse;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Optional;
-
 import org.codefx.maven.plugin.jdeps.dependency.InternalType;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * Tests the class {@link InternalTypeLineParser}.
+ */
 @SuppressWarnings("javadoc")
 public class InternalTypeLineParserTest {
 
@@ -42,15 +45,23 @@ public class InternalTypeLineParserTest {
 		assertTrue(isInternalTypeLine);
 	}
 
-	@Test
-	public void isInternalTypeLine_matchingLine$2_returnsTrue() throws Exception {
-		String example = "      -> sun.misc.Unsafe                             JDK internal API (rt.jar)";
-		boolean isInternalTypeLine = parser.isInternalTypeLine(example);
+    @Test
+    public void isInternalTypeLine_matchingLine$2_returnsTrue() throws Exception {
+        String example = "      -> sun.misc.Unsafe                             JDK internal API (rt.jar)";
+        boolean isInternalTypeLine = parser.isInternalTypeLine(example);
 
-		assertTrue(isInternalTypeLine);
-	}
+        assertTrue(isInternalTypeLine);
+    }
 
-	// parseLine
+    @Test
+    public void isInternalTypeLine_matchingLineStartingWithCapitalLetters_returnsTrue() throws Exception {
+        String example = "      -> Sun.misc.Unsafe                             JDK internal API (rt.jar)";
+        boolean isInternalTypeLine = parser.isInternalTypeLine(example);
+
+        assertTrue(isInternalTypeLine);
+    }
+
+    // parseLine
 
 	@Test(expected = NullPointerException.class)
 	public void parseLine_nullLine_throwsException() throws Exception {
@@ -74,14 +85,24 @@ public class InternalTypeLineParserTest {
 				.contains(InternalType.of("sun.misc", "BASE64Decoder", "JDK internal API", "rt.jar"));
 	}
 
-	@Test
-	public void parseLine_matchingLine$2_returnsTrue() throws Exception {
-		String example = "      -> sun.misc.Unsafe                             JDK internal API (rt.jar)";
-		Optional<InternalType> type = parser.parseLine(example);
+    @Test
+    public void parseLine_matchingLine$2_returnsTrue() throws Exception {
+        String example = "      -> sun.misc.Unsafe                             JDK internal API (rt.jar)";
+        Optional<InternalType> type = parser.parseLine(example);
 
-		assertThat(type)
-				.isPresent()
-				.contains(InternalType.of("sun.misc", "Unsafe", "JDK internal API", "rt.jar"));
-	}
+        assertThat(type)
+                .isPresent()
+                .contains(InternalType.of("sun.misc", "Unsafe", "JDK internal API", "rt.jar"));
+    }
+
+    @Test
+    public void parseLine_matchingLineStartingWithCapitalLetters_returnsTrue() throws Exception {
+        String example = "      -> Sun.misc.Unsafe                             JDK internal API (rt.jar)";
+        Optional<InternalType> type = parser.parseLine(example);
+
+        assertThat(type)
+                .isPresent()
+                .contains(InternalType.of("Sun.misc", "Unsafe", "JDK internal API", "rt.jar"));
+    }
 
 }

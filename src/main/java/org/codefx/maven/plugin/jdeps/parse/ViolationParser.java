@@ -1,15 +1,15 @@
 package org.codefx.maven.plugin.jdeps.parse;
 
+import org.codefx.maven.plugin.jdeps.dependency.InternalType;
+import org.codefx.maven.plugin.jdeps.dependency.Type;
+import org.codefx.maven.plugin.jdeps.dependency.Violation;
+import org.codefx.maven.plugin.jdeps.dependency.Violation.ViolationBuilder;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.codefx.maven.plugin.jdeps.dependency.InternalType;
-import org.codefx.maven.plugin.jdeps.dependency.Type;
-import org.codefx.maven.plugin.jdeps.dependency.Violation;
-import org.codefx.maven.plugin.jdeps.dependency.Violation.ViolationBuilder;
 
 /**
  * Parses violation blocks from the JDeps output line by line and hands created {@link Violation}s to a {@link Consumer}
@@ -26,7 +26,7 @@ public class ViolationParser {
 	 */
 	private static final Pattern REPORTED_TYPE_PATTERN = Pattern.compile(""
 			+ "\\s+" // leading spaces
-			+ "([a-zA_Z_][\\.\\w]*)" // qualified class name (simplified), e.g. "sun.misc.Unsafe"
+			+ "([a-zA-Z_][\\.\\w]*)" // qualified class name (simplified), e.g. "sun.misc.Unsafe"
 			+ "\\s+" // spaces to separate class name
 			+ ".*");
 
@@ -143,8 +143,8 @@ public class ViolationParser {
 		public BlockBegan(String fullyQualifiedClassName) {
 			assert fullyQualifiedClassName != null : "The argument 'fullyQualifiedClassName' must not be null.";
 
-			Type type = Type.of(fullyQualifiedClassName);
-			violationBuilder = Violation.forType(type);
+			Type dependent = Type.of(fullyQualifiedClassName);
+			violationBuilder = Violation.forDependent(dependent);
 		}
 
 		@Override

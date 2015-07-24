@@ -1,10 +1,10 @@
 package org.codefx.maven.plugin.jdeps.dependency;
 
-import static java.util.stream.Collectors.joining;
+import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
 
-import com.google.common.collect.ImmutableList;
+import static java.util.stream.Collectors.joining;
 
 /**
  * A violation is a dependency of a class on another class which is marked as JDK-internal API by jdeps.
@@ -13,41 +13,44 @@ import com.google.common.collect.ImmutableList;
  */
 public class Violation {
 
-	private final Type type;
+	private final Type dependent;
 	private final ImmutableList<InternalType> internalDependencies;
 
-	private Violation(Type type, ImmutableList<InternalType> internalDependencies) {
-		Objects.requireNonNull(type, "The argument 'type' must not be null.");
+    /**
+     * @throws IllegalStateException if the list of internal dependencies is empty
+     */
+	private Violation(Type dependent, ImmutableList<InternalType> internalDependencies) {
+		Objects.requireNonNull(dependent, "The argument 'dependent' must not be null.");
 		Objects.requireNonNull(
 				internalDependencies, "The argument 'internalDependencies' must not be null.");
 		if (internalDependencies.size() == 0)
 			throw new IllegalArgumentException(
 					"A violation must contain at least one internal dependency.");
 
-		this.type = type;
+		this.dependent = dependent;
 		this.internalDependencies = internalDependencies;
 	}
 
 	/**
 	 * Starts building a new violation.
 	 *
-	 * @param type
-	 *            the type which contains the violating dependency
+	 * @param dependent
+	 *            the dependent which contains the violating dependency
 	 * @return a {@link ViolationBuilder}
 	 */
-	public static ViolationBuilder forType(Type type) {
-		return new ViolationBuilder(type);
+	public static ViolationBuilder forDependent(Type dependent) {
+		return new ViolationBuilder(dependent);
 	}
 
 	/**
-	 * @return the type which contains the dependencies on internal types
+	 * @return the dependent which contains the dependencies on internal types
 	 */
-	public Type getType() {
-		return type;
+	public Type getDependent() {
+		return dependent;
 	}
 
 	/**
-	 * @return the internal types upon which {@link #getType()} depends
+	 * @return the internal types upon which {@link #getDependent()} depends
 	 */
 	public ImmutableList<InternalType> getInternalDependencies() {
 		return internalDependencies;
@@ -65,13 +68,13 @@ public class Violation {
 			return false;
 
 		Violation other = (Violation) obj;
-		return Objects.equals(type, other.type)
+		return Objects.equals(dependent, other.dependent)
 				&& Objects.equals(internalDependencies, other.internalDependencies);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(type, internalDependencies);
+		return Objects.hash(dependent, internalDependencies);
 	}
 
 	@Override
@@ -80,16 +83,16 @@ public class Violation {
 				.stream()
 				.map(Object::toString)
 				.collect(joining(", ", "{", "}"));
-		return type + " -> " + dependencies;
+		return dependent + " -> " + dependencies;
 	}
 
 	/**
 	 * @return a string representation of a violation which spans multiple lines
 	 */
 	public String toMultiLineString() {
-		String typeLine = ".\t" + type + "\n";
+		String dependentLine = ".\t" + dependent + "\n";
 		String dependencyLineStart = ".\t\t -> ";
-		return typeLine
+		return dependentLine
 				+ internalDependencies.stream()
 						.map(Object::toString)
 						.collect(joining("\n" + dependencyLineStart, dependencyLineStart, ""));
@@ -104,14 +107,14 @@ public class Violation {
 	 */
 	public static class ViolationBuilder {
 
-		private final Type type;
+		private final Type dependent;
 
 		private final ImmutableList.Builder<InternalType> internalDependenciesBuilder;
 
-		private ViolationBuilder(Type type) {
-			Objects.requireNonNull(type, "The argument 'type' must not be null.");
+		private ViolationBuilder(Type dependent) {
+			Objects.requireNonNull(dependent, "The argument 'dependent' must not be null.");
 
-			this.type = type;
+			this.dependent = dependent;
 			this.internalDependenciesBuilder = ImmutableList.builder();
 		}
 
@@ -119,7 +122,7 @@ public class Violation {
 		 * Adds the specified {@link InternalType} as a dependency.
 		 *
 		 * @param dependency
-		 *            an internal type
+		 *            an internal dependent
 		 * @return this builder
 		 */
 		public ViolationBuilder addDependency(InternalType dependency) {
@@ -145,9 +148,16 @@ public class Violation {
 
 		/**
 		 * @return a new {@link Violation}
+		 * @throws IllegalStateException if the list of internal dependencies is empty
 		 */
 		public Violation build() {
-			return new Violation(type, internalDependenciesBuilder.build());
+            try {
+                return new Violation(dependent, internalDependenciesBuilder.build());
+            } catch (IllegalArgumentException ex) {
+                String message = "The violation could not be built because it contains no internal depenencies. " +
+                        "Maybe the violation block ended prematurely?";
+                throw new IllegalStateException(message, ex);
+            }
 		}
 
 	}

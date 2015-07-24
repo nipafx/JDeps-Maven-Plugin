@@ -1,11 +1,11 @@
 package org.codefx.maven.plugin.jdeps.parse;
 
+import org.codefx.maven.plugin.jdeps.dependency.InternalType;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.codefx.maven.plugin.jdeps.dependency.InternalType;
 
 /**
  * Parses a single line of JDeps output to an {@link InternalType}.
@@ -20,7 +20,7 @@ class InternalTypeLineParser {
 
 	private static final Pattern JDEPS_DEPENDENCY_PATTERN = Pattern.compile(""
 			+ "\\s+->\\s+" // leading spaces and arrow, e.g. "      -> "
-			+ "([a-zA_Z_][\\.\\w]*)" // qualified class name (simplified), e.g. "sun.misc.Unsafe"
+			+ "([a-zA-Z_][\\.\\w]*)" // qualified class name (simplified), e.g. "sun.misc.Unsafe"
 			+ "\\s+" // spaces to fill up the column
 			+ "(\\w[\\w\\s]*\\w*)" // category, e.g. "JDK Internal API"
 			+ "\\s" // space between category and source
