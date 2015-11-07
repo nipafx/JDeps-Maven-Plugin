@@ -1,17 +1,16 @@
 package org.codefx.maven.plugin.jdeps.mojo;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import org.codefx.maven.plugin.jdeps.dependency.Violation;
 import org.codefx.maven.plugin.jdeps.parse.ViolationParser;
+import org.codefx.maven.plugin.jdeps.result.Result;
+import org.codefx.maven.plugin.jdeps.result.ResultBuilder;
 import org.codefx.maven.plugin.jdeps.tool.ComposedJDepsSearch;
 import org.codefx.maven.plugin.jdeps.tool.JDepsSearch;
 import org.codefx.maven.plugin.jdeps.tool.JdkInternalsExecutor;
 import org.codehaus.plexus.util.cli.CommandLineException;
 
-import com.google.common.collect.ImmutableList;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Orchestrates all bits and pieces which are needed to run "jdeps -jdkInternals" and parse the output.
@@ -22,21 +21,23 @@ class JdkInternalsExecutionService {
 	 * Executes jdeps.
 	 *
 	 * @param scannedFolder
-	 *            the folder to be scanned
-	 * @return a list of all violations
+	 * 		the folder to be scanned
+	 *
+	 * @return the result of the JDeps run
+	 *
 	 * @throws CommandLineException
-	 *             if the jdeps executable could not be found, running the tool failed or it returned with an error
+	 * 		if the jdeps executable could not be found, running the tool failed or it returned with an error
 	 */
-	public static ImmutableList<Violation> execute(File scannedFolder) throws CommandLineException {
+	public static Result execute(File scannedFolder) throws CommandLineException {
 		Path jDepsExecutable = findJDepsExecutable();
-		ImmutableList.Builder<Violation> violationListBuilder = ImmutableList.builder();
-		ViolationParser violationParser = new ViolationParser(violationListBuilder::add);
+		ResultBuilder resultBuilder = new ResultBuilder();
+		ViolationParser violationParser = new ViolationParser(resultBuilder::addViolation);
 		JdkInternalsExecutor executor = new JdkInternalsExecutor(
 				jDepsExecutable, Paths.get(scannedFolder.toURI()), violationParser::parseLine);
 
 		executor.execute();
 
-		return violationListBuilder.build();
+		return resultBuilder.build();
 	}
 
 	private static Path findJDepsExecutable() throws CommandLineException {

@@ -2,11 +2,10 @@ package org.codefx.maven.plugin.jdeps.mojo;
 
 import java.io.File;
 
-import org.codefx.maven.plugin.jdeps.dependency.Violation;
+import org.codefx.maven.plugin.jdeps.result.Result;
+import org.codefx.maven.plugin.jdeps.result.SystemOutResultOutputStrategy;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Tests {@link JdkInternalsExecutionService}.
@@ -18,13 +17,12 @@ import com.google.common.collect.ImmutableList;
 @SuppressWarnings("javadoc")
 public class JdkInternalsExecutionServiceTest {
 
-	private static final String PATH_TO_SCANNED_FOLDER = "D:\\Code\\MavenLab\\target\\";
+	private static final String PATH_TO_SCANNED_FOLDER = "/home/nipa/Code/MavenLab/target";
 
 	@Test
 	public void execute_pathsExist_returnsViolations() throws Exception {
-		ImmutableList<Violation> violations = JdkInternalsExecutionService.execute(new File(PATH_TO_SCANNED_FOLDER));
-
-		violations.forEach(System.out::println);
+		Result result = JdkInternalsExecutionService.execute(new File(PATH_TO_SCANNED_FOLDER));
+		new SystemOutResultOutputStrategy().output(result);
 	}
 
 }

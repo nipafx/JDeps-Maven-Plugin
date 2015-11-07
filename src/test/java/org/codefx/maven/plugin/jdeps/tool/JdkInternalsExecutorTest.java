@@ -15,9 +15,8 @@ import org.junit.Test;
 @SuppressWarnings("javadoc")
 public class JdkInternalsExecutorTest {
 
-	private static final String PATH_TO_JDEPS = "C:\\Program Files\\Java\\jdk8\\bin\\jdeps.exe";
-
-	private static final String PATH_TO_SCANNED_FOLDER = "D:\\Code\\MavenLab\\target\\";
+	private static final String PATH_TO_JDEPS = "/opt/java/jdk8/bin/jdeps";
+	private static final String PATH_TO_SCANNED_FOLDER = "/home/nipa/Code/MavenLab/target";
 
 	@Test
 	public void execute_pathsExist_printsJDepsOutput() throws Exception {
