@@ -9,7 +9,7 @@ import org.apache.maven.toolchain.Toolchain;
 /**
  * Tries to locate JDeps in the JDK specified to the Maven Toolchain.
  */
-public class MavenToolchainJDepsSearch implements JDepsSearch {
+class MavenToolchainJDepsSearch implements JDepsSearch {
 
 	private final Toolchain toolchain;
 

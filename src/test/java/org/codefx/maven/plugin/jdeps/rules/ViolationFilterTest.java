@@ -70,7 +70,7 @@ public class ViolationFilterTest {
 
 		assertThat(filteredViolation).isPresent();
 		assertThat(filteredViolation.get().getDependent()).isEqualTo(dependent);
-		assertThat(filteredViolation.get().getInternalDependencies()).containsOnly(cache);
+		assertThat(filteredViolation.get().getInternalDependencies()).containsExactly(cache);
 	}
 
 	@Test

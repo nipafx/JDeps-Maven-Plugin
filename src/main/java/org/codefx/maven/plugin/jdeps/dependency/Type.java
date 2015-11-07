@@ -72,6 +72,14 @@ public class Type {
 		return className;
 	}
 
+	/**
+	 * @return this type's fully qualified name, i.e.
+	 * {@link #getPackageName() packageName}.{@link #getClassName() className}
+	 */
+	public String getFullyQualifiedName() {
+		return packageName + "." + className;
+	}
+
 	// #begin EQUALS / HASHCODE / TOSTRING
 
 	@Override

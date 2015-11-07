@@ -12,7 +12,7 @@ import org.apache.commons.lang3.SystemUtils;
  * This class does not implement {@link JDepsSearch} because it can not function on its own and requires input (namely
  * the JDK folder).
  */
-public class SearchJDepsInJdk {
+class SearchJDepsInJdk {
 
 	/**
 	 * @param jdkHome
@@ -31,8 +31,7 @@ public class SearchJDepsInJdk {
 	}
 
 	private static String jDepsFileName() {
-		String jDepsExecutable = "jdeps" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : "");
-		return jDepsExecutable;
+		return "jdeps" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : "");
 	}
 
 }
