@@ -1,6 +1,6 @@
 package org.codefx.maven.plugin.jdeps.dependency;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A type which is considered JDK-internal API by JDeps.
@@ -15,24 +15,22 @@ public final class InternalType extends Type {
 
 	private InternalType(String packageName, String className, String category, String source) {
 		super(packageName, className);
-		Objects.requireNonNull(category, "The argument 'category' must not be null.");
-		Objects.requireNonNull(source, "The argument 'source' must not be null.");
-
-		this.category = category;
-		this.source = source;
+		this.category = requireNonNull(category, "The argument 'category' must not be null.");
+		this.source = requireNonNull(source, "The argument 'source' must not be null.");
 	}
 
 	/**
 	 * Returns an internal type for the specified arguments.
 	 *
 	 * @param packageName
-	 *            the name of the package containing the type (dotted)
+	 * 		the name of the package containing the type (dotted)
 	 * @param className
-	 *            the name of the type's class (dotted)
+	 * 		the name of the type's class (dotted)
 	 * @param category
-	 *            the category as reported by JDeps (e.g. "JDK internal API")
+	 * 		the category as reported by JDeps (e.g. "JDK internal API")
 	 * @param source
-	 *            the source as reported by JDeps (e.g. "rt.jar")
+	 * 		the source as reported by JDeps (e.g. "rt.jar")
+	 *
 	 * @return an internal type
 	 */
 	public static InternalType of(

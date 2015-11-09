@@ -144,7 +144,7 @@ public class ViolationParser {
 			assert fullyQualifiedClassName != null : "The argument 'fullyQualifiedClassName' must not be null.";
 
 			Type dependent = Type.of(fullyQualifiedClassName);
-			violationBuilder = Violation.forDependent(dependent);
+			violationBuilder = Violation.buildForDependent(dependent);
 		}
 
 		@Override

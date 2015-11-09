@@ -2,6 +2,8 @@ package org.codefx.maven.plugin.jdeps.dependency;
 
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * A simple textual representation of a type consisting of the package and the class name.
  */
@@ -14,25 +16,28 @@ public class Type {
 	 * Creates a new type.
 	 *
 	 * @param packageName
-	 *            the name of the package containing the type (dotted)
+	 * 		the name of the package containing the type (dotted)
 	 * @param className
-	 *            the name of the type's class (dotted)
+	 * 		the name of the type's class (dotted)
 	 */
 	protected Type(String packageName, String className) {
-		Objects.requireNonNull(packageName, "The argument 'packageName' must not be null.");
-		Objects.requireNonNull(className, "The argument 'className' must not be null.");
+		this.packageName = requireNonNull(packageName, "The argument 'packageName' must not be null.");
+		this.className = requireNonNull(className, "The argument 'className' must not be null.");
 
-		this.packageName = packageName;
-		this.className = className;
+		if (packageName.isEmpty())
+			throw new IllegalArgumentException("The argument 'packageName' must not be empty.");
+		if (className.isEmpty())
+			throw new IllegalArgumentException("The argument 'className' must not be empty.");
 	}
 
 	/**
 	 * Returns a type for the specified package and class name.
 	 *
 	 * @param packageName
-	 *            the name of the package containing the type (dotted)
+	 * 		the name of the package containing the type (dotted)
 	 * @param className
-	 *            the name of the type's class (dotted)
+	 * 		the name of the type's class (dotted)
+	 *
 	 * @return a type
 	 */
 	public static Type of(String packageName, String className) {
@@ -43,15 +48,20 @@ public class Type {
 	 * Returns a type for the specified fully qualified class name.
 	 *
 	 * @param qualifiedClassName
-	 *            the fully qualified name of the type's class (dotted)
+	 * 		the fully qualified name of the type's class (dotted)
+	 *
 	 * @return a type
 	 */
 	public static Type of(String qualifiedClassName) {
-		Objects.requireNonNull(qualifiedClassName, "The argument 'qualifiedClassName' must not be null.");
+		requireNonNull(qualifiedClassName, "The argument 'qualifiedClassName' must not be null.");
+		if (qualifiedClassName.isEmpty())
+			throw new IllegalArgumentException("The argument 'qualifiedClassName' must not be empty.");
+
 		int lastDotIndex = qualifiedClassName.lastIndexOf('.');
 		if (lastDotIndex == -1)
 			throw new IllegalArgumentException(
-					"The argument 'qualifiedClassName' must be a fully qualified class name with at least one dot ('.').");
+					"The argument 'qualifiedClassName' must be a fully qualified class name "
+							+ "with at least one dot ('.').");
 
 		String packageName = qualifiedClassName.substring(0, lastDotIndex);
 		String className = qualifiedClassName.substring(lastDotIndex + 1);
