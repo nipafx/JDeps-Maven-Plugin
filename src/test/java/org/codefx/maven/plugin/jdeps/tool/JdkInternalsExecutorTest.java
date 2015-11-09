@@ -1,9 +1,9 @@
 package org.codefx.maven.plugin.jdeps.tool;
 
-import java.nio.file.Paths;
-
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.nio.file.Paths;
 
 /**
  * Tests {@link JdkInternalsExecutor}.
@@ -20,6 +20,8 @@ public class JdkInternalsExecutorTest {
 
 	@Test
 	public void execute_pathsExist_printsJDepsOutput() throws Exception {
+		System.out.println("\n# " + getClass().getSimpleName().toUpperCase());
+
 		JdkInternalsExecutor executor = new JdkInternalsExecutor(
 				Paths.get(PATH_TO_JDEPS), Paths.get(PATH_TO_SCANNED_FOLDER), System.out::println);
 		executor.execute();
