@@ -1,9 +1,10 @@
 package org.codefx.maven.plugin.jdeps.rules;
 
+import org.codefx.maven.plugin.jdeps.dependency.InternalType;
 import org.codefx.maven.plugin.jdeps.dependency.Type;
 
 /**
- * Judges whether individual dependencies are forbidden or not.
+ * Judges the severity of individual dependencies.
  */
 public interface DependencyJudge {
 
@@ -14,8 +15,8 @@ public interface DependencyJudge {
 	 *            the type which depends on the the other type
 	 * @param dependency
 	 *            the type upon which the {@code dependent} depends
-	 * @return true if the dependency {@code dependent -> dependency} is forbidden; otherwise false
+	 * @return the severity of the dependency {@code dependent -> dependency}
 	 */
-	boolean forbiddenDependency(Type dependent, Type dependency);
+	Severity judgeSeverity(Type dependent, InternalType dependency);
 
 }

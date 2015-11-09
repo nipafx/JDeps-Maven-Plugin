@@ -3,6 +3,7 @@ package org.codefx.maven.plugin.jdeps.mojo;
 import org.codefx.maven.plugin.jdeps.parse.ViolationParser;
 import org.codefx.maven.plugin.jdeps.result.Result;
 import org.codefx.maven.plugin.jdeps.result.ResultBuilder;
+import org.codefx.maven.plugin.jdeps.rules.AllFailDependencyJudge;
 import org.codefx.maven.plugin.jdeps.tool.ComposedJDepsSearch;
 import org.codefx.maven.plugin.jdeps.tool.JDepsSearch;
 import org.codefx.maven.plugin.jdeps.tool.JdkInternalsExecutor;
@@ -30,7 +31,7 @@ class JdkInternalsExecutionService {
 	 */
 	public static Result execute(File scannedFolder) throws CommandLineException {
 		Path jDepsExecutable = findJDepsExecutable();
-		ResultBuilder resultBuilder = new ResultBuilder();
+		ResultBuilder resultBuilder = new ResultBuilder(new AllFailDependencyJudge());
 		ViolationParser violationParser = new ViolationParser(resultBuilder::addViolation);
 		JdkInternalsExecutor executor = new JdkInternalsExecutor(
 				jDepsExecutable, Paths.get(scannedFolder.toURI()), violationParser::parseLine);
