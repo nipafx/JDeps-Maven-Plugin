@@ -1,19 +1,60 @@
 package org.codefx.maven.plugin.jdeps.result;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.codefx.maven.plugin.jdeps.dependency.Violation;
+import org.codefx.maven.plugin.jdeps.rules.Severity;
+
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.joining;
 
+/**
+ * The result of running JDeps.
+ * <p>
+ * The violations are made available with a number streams, one for each severity.
+ */
 public class Result {
 
-	final ImmutableList<Violation> violations;
+	private final ImmutableList<AnnotatedViolation> violations;
 
-	Result(ImmutableList<Violation> violations) {
+	Result(ImmutableList<AnnotatedViolation> violations) {
 		this.violations = requireNonNull(violations, "The argument 'violations' must not be null.");
+	}
+
+	private Stream<Violation> violationsWithSeverity(Severity severity) {
+		return violations.stream()
+				.map(violation -> violation.only(severity))
+				.filter(Optional::isPresent)
+				.map(Optional::get);
+	}
+
+	/**
+	 * @return a stream of the violations that are configured to be ignored
+	 */
+	public Stream<Violation> violationsToIgnore() {
+		return violationsWithSeverity(Severity.IGNORE);
+	}
+
+	/**
+	 * @return a stream of the violations that are configured to be be informed about
+	 */
+	public Stream<Violation> violationsToInform() {
+		return violationsWithSeverity(Severity.INFORM);
+	}
+
+	/**
+	 * @return a stream of the violations that are configured to be warned about
+	 */
+	public Stream<Violation> violationsToWarn() {
+		return violationsWithSeverity(Severity.WARN);
+	}
+
+	/**
+	 * @return a stream of the violations that are configured to fail the build
+	 */
+	public Stream<Violation> violationsToFail() {
+		return violationsWithSeverity(Severity.FAIL);
 	}
 
 }
