@@ -45,7 +45,7 @@ public class TypeNameHierarchyMapDependencyJudge implements DependencyJudge {
 		private final Map<String, Map<String, Severity>> dependencies;
 		private boolean alreadyBuilt;
 
-		TypeNameMapDependencyJudgeBuilder() {
+		public TypeNameMapDependencyJudgeBuilder() {
 			defaultSeverity = Severity.FAIL;
 			dependencies = new HashMap<>();
 			alreadyBuilt = false;

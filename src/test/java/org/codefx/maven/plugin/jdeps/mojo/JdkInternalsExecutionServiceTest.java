@@ -1,11 +1,12 @@
 package org.codefx.maven.plugin.jdeps.mojo;
 
-import java.io.File;
-
 import org.codefx.maven.plugin.jdeps.result.Result;
 import org.codefx.maven.plugin.jdeps.result.SystemOutResultOutputStrategy;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.File;
+import java.util.Optional;
 
 /**
  * Tests {@link JdkInternalsExecutionService}.
@@ -21,7 +22,8 @@ public class JdkInternalsExecutionServiceTest {
 
 	@Test
 	public void execute_pathsExist_returnsViolations() throws Exception {
-		Result result = JdkInternalsExecutionService.execute(new File(PATH_TO_SCANNED_FOLDER));
+		Result result = JdkInternalsExecutionService.execute(new File(PATH_TO_SCANNED_FOLDER),
+				new DependencyRulesConfiguration(Optional.empty()));
 		new SystemOutResultOutputStrategy().output(result);
 	}
 

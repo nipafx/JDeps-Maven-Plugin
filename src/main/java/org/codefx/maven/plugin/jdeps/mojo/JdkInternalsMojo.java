@@ -10,6 +10,7 @@ import org.codefx.maven.plugin.jdeps.result.Result;
 import org.codehaus.plexus.util.cli.CommandLineException;
 
 import java.io.File;
+import java.util.Optional;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
 import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE;
@@ -24,8 +25,14 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE;
 		requiresDependencyResolution = COMPILE)
 public class JdkInternalsMojo extends AbstractMojo {
 
+	/**
+	 * Indicates which dependencies are allowed and which are forbidden.
+	 */
+	@Parameter(defaultValue = "", property = "jdkinternals.rules")
+	private String dependencyRules;
+
 	@Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true)
-	private File outputDirectory;
+	private File buildOutputDirectory;
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
@@ -35,7 +42,10 @@ public class JdkInternalsMojo extends AbstractMojo {
 
 	private Result executeJDeps() throws MojoFailureException {
 		try {
-			return JdkInternalsExecutionService.execute(outputDirectory);
+			return JdkInternalsExecutionService.execute(
+					buildOutputDirectory,
+					new DependencyRulesConfiguration(Optional.ofNullable(dependencyRules))
+			);
 		} catch (CommandLineException ex) {
 			throw new MojoFailureException("Executing 'jdeps -jdkinternals' failed.", ex);
 		}
