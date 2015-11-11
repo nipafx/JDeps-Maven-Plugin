@@ -1,5 +1,6 @@
 package org.codefx.maven.plugin.jdeps.mojo;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.codefx.maven.plugin.jdeps.parse.ViolationParser;
 import org.codefx.maven.plugin.jdeps.result.Result;
 import org.codefx.maven.plugin.jdeps.result.ResultBuilder;
@@ -7,6 +8,7 @@ import org.codefx.maven.plugin.jdeps.rules.DependencyJudge;
 import org.codefx.maven.plugin.jdeps.tool.ComposedJDepsSearch;
 import org.codefx.maven.plugin.jdeps.tool.JDepsSearch;
 import org.codefx.maven.plugin.jdeps.tool.JdkInternalsExecutor;
+import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 import org.codehaus.plexus.util.cli.CommandLineException;
 
 import java.io.File;
@@ -32,8 +34,8 @@ class JdkInternalsExecutionService {
 	 * 		if the jdeps executable could not be found, running the tool failed or it returned with an error
 	 */
 	public static Result execute(
-			File scannedFolder, DependencyRulesConfiguration dependencyRulesConfiguration) throws
-			CommandLineException {
+			File scannedFolder, DependencyRulesConfiguration dependencyRulesConfiguration)
+			throws CommandLineException, ConfigurationException {
 		Path jDepsExecutable = findJDepsExecutable();
 
 		ResultBuilder resultBuilder = createResultBuilder(dependencyRulesConfiguration);
@@ -51,7 +53,8 @@ class JdkInternalsExecutionService {
 		return jDepsSearch.search().orElseThrow(() -> new CommandLineException("Could not locate jdeps executable."));
 	}
 
-	private static ResultBuilder createResultBuilder(DependencyRulesConfiguration dependencyRulesConfiguration) {
+	private static ResultBuilder createResultBuilder(DependencyRulesConfiguration dependencyRulesConfiguration)
+			throws ConfigurationException {
 		DependencyJudge dependencyJudge = dependencyRulesConfiguration.createJudge();
 		return new ResultBuilder(dependencyJudge);
 	}

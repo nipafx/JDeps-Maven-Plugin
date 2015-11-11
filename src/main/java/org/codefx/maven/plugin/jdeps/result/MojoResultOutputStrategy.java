@@ -1,7 +1,7 @@
 package org.codefx.maven.plugin.jdeps.result;
 
 import com.google.common.collect.Sets;
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.codefx.maven.plugin.jdeps.dependency.Violation;
 
@@ -48,7 +48,7 @@ public class MojoResultOutputStrategy implements ResultOutputStrategy {
 	}
 
 	@Override
-	public void output(Result result) throws MojoExecutionException {
+	public void output(Result result) throws MojoFailureException {
 		int violationsCount = logNumberOfViolationsToIgnore(result);
 		violationsCount += logViolationsToInform(result);
 		violationsCount += logViolationsToWarn(result);
@@ -71,11 +71,11 @@ public class MojoResultOutputStrategy implements ResultOutputStrategy {
 		return logViolations(result.violationsToWarn(), MESSAGE_WARN_DEPENDENCIES, log::warn);
 	}
 
-	private int throwExceptionForViolationsToFail(Result result) throws MojoExecutionException {
+	private int throwExceptionForViolationsToFail(Result result) throws MojoFailureException {
 		return countAndIfViolationsExist(
 				result.violationsToFail(),
 				(count, message) -> {
-					throw new MojoExecutionException(format(MESSAGE_FAIL_DEPENDENCIES, count, message));
+					throw new MojoFailureException(format(MESSAGE_FAIL_DEPENDENCIES, count, message));
 				});
 	}
 

@@ -1,6 +1,6 @@
 package org.codefx.maven.plugin.jdeps.result;
 
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.codefx.maven.plugin.jdeps.dependency.Violation;
 
 import java.util.stream.Stream;
@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 public class SystemOutResultOutputStrategy implements ResultOutputStrategy {
 
 	@Override
-	public void output(Result result) throws MojoExecutionException {
+	public void output(Result result) throws MojoFailureException {
 		output("IGNORE", result.violationsToIgnore());
 		output("INFORM", result.violationsToInform());
 		output("WARN:", result.violationsToWarn());

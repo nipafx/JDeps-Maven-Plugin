@@ -7,6 +7,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codefx.maven.plugin.jdeps.result.MojoResultOutputStrategy;
 import org.codefx.maven.plugin.jdeps.result.Result;
+import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 import org.codehaus.plexus.util.cli.CommandLineException;
 
 import java.io.File;
@@ -40,14 +41,16 @@ public class JdkInternalsMojo extends AbstractMojo {
 		new MojoResultOutputStrategy(getLog()).output(result);
 	}
 
-	private Result executeJDeps() throws MojoFailureException {
+	private Result executeJDeps() throws MojoExecutionException {
 		try {
 			return JdkInternalsExecutionService.execute(
 					buildOutputDirectory,
 					new DependencyRulesConfiguration(Optional.ofNullable(dependencyRules))
 			);
 		} catch (CommandLineException ex) {
-			throw new MojoFailureException("Executing 'jdeps -jdkinternals' failed.", ex);
+			throw new MojoExecutionException("Executing 'jdeps -jdkinternals' failed.", ex);
+		} catch (ConfigurationException ex) {
+			throw new MojoExecutionException("Parsing the configuration failed.", ex);
 		}
 	}
 
