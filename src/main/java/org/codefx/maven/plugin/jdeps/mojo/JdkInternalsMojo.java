@@ -11,7 +11,8 @@ import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 import org.codehaus.plexus.util.cli.CommandLineException;
 
 import java.io.File;
-import java.util.Optional;
+import java.util.Collections;
+import java.util.List;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
 import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE;
@@ -26,11 +27,11 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE;
 		requiresDependencyResolution = COMPILE)
 public class JdkInternalsMojo extends AbstractMojo {
 
-	/**
-	 * Indicates which dependencies are allowed and which are forbidden.
-	 */
-	@Parameter(defaultValue = "", property = "jdkinternals.rules")
-	private String dependencyRules;
+	@Parameter
+	private List<String> arrowDependencyRules;
+
+	@Parameter
+	private List<Rule> verboseDependencyRules;
 
 	@Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true)
 	private File buildOutputDirectory;
@@ -45,13 +46,20 @@ public class JdkInternalsMojo extends AbstractMojo {
 		try {
 			return JdkInternalsExecutionService.execute(
 					buildOutputDirectory,
-					new DependencyRulesConfiguration(Optional.ofNullable(dependencyRules))
+					new DependencyRulesConfiguration(
+							getLog(),
+							emptyListIfNull(verboseDependencyRules),
+							emptyListIfNull(arrowDependencyRules))
 			);
 		} catch (CommandLineException ex) {
 			throw new MojoExecutionException("Executing 'jdeps -jdkinternals' failed.", ex);
 		} catch (ConfigurationException ex) {
 			throw new MojoExecutionException("Parsing the configuration failed.", ex);
 		}
+	}
+
+	private static <E> List<E> emptyListIfNull(List<E> list) {
+		return list == null ? Collections.emptyList() : list;
 	}
 
 }
