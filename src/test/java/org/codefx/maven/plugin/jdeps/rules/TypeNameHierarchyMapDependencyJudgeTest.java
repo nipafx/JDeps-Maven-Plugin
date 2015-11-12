@@ -1,6 +1,6 @@
 package org.codefx.maven.plugin.jdeps.rules;
 
-import org.codefx.maven.plugin.jdeps.rules.TypeNameHierarchyMapDependencyJudge.TypeNameMapDependencyJudgeBuilder;
+import org.codefx.maven.plugin.jdeps.rules.TypeNameHierarchyMapDependencyJudge.TypeNameHierarchyMapDependencyJudgeBuilder;
 
 /**
  * Tests for {@link TypeNameHierarchyMapDependencyJudge}.
@@ -9,6 +9,6 @@ public class TypeNameHierarchyMapDependencyJudgeTest extends AbstractDependencyJ
 
 	@Override
 	protected DependencyJudgeBuilder builder() {
-		return new TypeNameMapDependencyJudgeBuilder();
+		return new TypeNameHierarchyMapDependencyJudgeBuilder();
 	}
 }

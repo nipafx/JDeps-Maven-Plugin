@@ -39,13 +39,13 @@ public class TypeNameHierarchyMapDependencyJudge implements DependencyJudge {
 		return defaultSeverity;
 	}
 
-	public static class TypeNameMapDependencyJudgeBuilder implements DependencyJudgeBuilder {
+	public static class TypeNameHierarchyMapDependencyJudgeBuilder implements DependencyJudgeBuilder {
 
 		private Severity defaultSeverity;
 		private final Map<String, Map<String, Severity>> dependencies;
 		private boolean alreadyBuilt;
 
-		public TypeNameMapDependencyJudgeBuilder() {
+		public TypeNameHierarchyMapDependencyJudgeBuilder() {
 			defaultSeverity = Severity.FAIL;
 			dependencies = new HashMap<>();
 			alreadyBuilt = false;
@@ -58,9 +58,7 @@ public class TypeNameHierarchyMapDependencyJudge implements DependencyJudge {
 		}
 
 		@Override
-		public DependencyJudgeBuilder addDependency(
-				String dependentName, String dependencyName, Severity
-				severity) {
+		public DependencyJudgeBuilder addDependency(String dependentName, String dependencyName, Severity severity) {
 			requireNonNull(dependentName, "The argument 'dependentName' must not be null.");
 			requireNonNull(dependencyName, "The argument 'dependencyName' must not be null.");
 			requireNonNull(severity, "The argument 'severity' must not be null.");
