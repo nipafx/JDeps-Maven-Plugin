@@ -16,6 +16,8 @@ public final class DependencyRule {
 	private static final String ERROR_MESSAGE_NAME_PART_CONTAINS_INVALID =
 			"In the rule %s the name '%s' contains the invalid character '%s'.";
 
+	private static final String ERROR_MESSAGE_INVALID_SEVERITY = "The rule %s defines an invalid severity.";
+
 	private final String dependent;
 	private final String dependency;
 	private final Severity severity;
@@ -27,12 +29,20 @@ public final class DependencyRule {
 	}
 
 	public static DependencyRule of(String dependent, String dependency, String severity) {
+		Severity asSeverity = parseSeverity(dependent, dependency, severity);
+		return of(dependent, dependency, asSeverity);
+	}
+
+	private static Severity parseSeverity(String dependent, String dependency, String severity) {
 		if (severity == null)
 			throw new IllegalArgumentException(
 					format(ERROR_MESSAGE_MISSING_SEVERITY, toString(dependent, dependency, (String) null)));
-		Severity asSeverity = Severity.valueOf(severity);
-
-		return of(dependent, dependency, asSeverity);
+		try {
+			return Severity.valueOf(severity);
+		} catch (IllegalArgumentException ex) {
+			throw new IllegalArgumentException(
+					format(ERROR_MESSAGE_INVALID_SEVERITY, toString(dependent, dependency, severity)));
+		}
 	}
 
 	public static DependencyRule of(String dependent, String dependency, Severity severity) {
