@@ -13,7 +13,8 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Parses rules of the form "com.fo.Bar -> sun.misc.Unsafe: WARN" and "com.fo.Bar on sun.misc.Unsafe: WARN".
+ * Parses rules of the form
+ * {@code com.foo.Bar -> sun.misc.Unsafe: WARN} and {@code com.fo.Bar on sun.misc.Unsafe: WARN}.
  */
 public class ArrowRuleParser {
 

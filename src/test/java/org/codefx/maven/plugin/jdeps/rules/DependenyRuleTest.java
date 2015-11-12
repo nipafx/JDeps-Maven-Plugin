@@ -1,5 +1,6 @@
 package org.codefx.maven.plugin.jdeps.rules;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
@@ -10,7 +11,7 @@ import static java.lang.String.format;
  */
 public class DependenyRuleTest {
 
-	@org.junit.Rule
+	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
 	/*
@@ -21,12 +22,10 @@ public class DependenyRuleTest {
 
 	@Test
 	public void checkName_nameNull_throwsException() throws Exception {
-		String faultyName = null;
-
 		thrown.expect(IllegalArgumentException.class);
-		thrown.expectMessage(format("The rule (%s -> sun.misc.Unsafe: FAIL) defines no dependent.", faultyName));
+		thrown.expectMessage("The rule (null -> sun.misc.Unsafe: FAIL) defines no dependent.");
 
-		letRuleCheckName(faultyName);
+		letRuleCheckName(null);
 	}
 
 	@Test

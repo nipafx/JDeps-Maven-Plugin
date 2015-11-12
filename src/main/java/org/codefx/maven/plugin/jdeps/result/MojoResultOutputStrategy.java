@@ -41,7 +41,8 @@ public class MojoResultOutputStrategy implements ResultOutputStrategy {
 	/**
 	 * Creates a new output strategy.
 	 *
-	 * @param log the log to use for reporting violations
+	 * @param log
+	 * 		the log to use for reporting violations
 	 */
 	public MojoResultOutputStrategy(Log log) {
 		this.log = Objects.requireNonNull(log, "The argument 'log' must not be null.");
@@ -128,11 +129,16 @@ public class MojoResultOutputStrategy implements ResultOutputStrategy {
 	/**
 	 * Uses two collectors on a stream of pairs to create a pair of collection results.
 	 *
-	 * @param <T> the type of input elements to the reduction operation
-	 * @param <A> the result type of the first reduction operation
-	 * @param <B> the result type of the second reduction operation
-	 * @param <CA> the mutable accumulation type of the first reduction operation
-	 * @param <CB> the mutable accumulation type of the second reduction operation
+	 * @param <T>
+	 * 		the type of input elements to the reduction operation
+	 * @param <A>
+	 * 		the result type of the first reduction operation
+	 * @param <B>
+	 * 		the result type of the second reduction operation
+	 * @param <CA>
+	 * 		the mutable accumulation type of the first reduction operation
+	 * @param <CB>
+	 * 		the mutable accumulation type of the second reduction operation
 	 */
 	private static class PairCollector<T, A, B, CA, CB> implements Collector<T, Pair<CA, CB>, Pair<A, B>> {
 
