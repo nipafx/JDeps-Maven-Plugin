@@ -1,6 +1,5 @@
 package org.codefx.maven.plugin.jdeps.mojo;
 
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codefx.maven.plugin.jdeps.result.Result;
 import org.codefx.maven.plugin.jdeps.result.SystemOutResultOutputStrategy;
 import org.junit.Ignore;
@@ -23,9 +22,9 @@ public class JdkInternalsExecutionServiceTest {
 
 	@Test
 	public void execute_pathsExist_returnsViolations() throws Exception {
-		Result result = JdkInternalsExecutionService.execute(new File(PATH_TO_SCANNED_FOLDER),
-				new DependencyRulesConfiguration(
-						new SystemStreamLog(), Collections.emptyList(), Collections.emptyList()));
+		Result result = JdkInternalsExecutionService.execute(
+				new File(PATH_TO_SCANNED_FOLDER),
+				new DependencyRulesConfiguration(Collections.emptyList(), Collections.emptyList()));
 		new SystemOutResultOutputStrategy().output(result);
 	}
 

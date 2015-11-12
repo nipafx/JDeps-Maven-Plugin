@@ -1,6 +1,5 @@
 package org.codefx.maven.plugin.jdeps.mojo;
 
-import org.apache.maven.plugin.logging.Log;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudge;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudgeBuilder;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
@@ -8,9 +7,7 @@ import org.codefx.maven.plugin.jdeps.rules.TypeNameHierarchyMapDependencyJudge
 		.TypeNameHierarchyMapDependencyJudgeBuilder;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -20,14 +17,11 @@ import static java.util.Objects.requireNonNull;
  */
 class DependencyRulesConfiguration {
 
-	private final Log log;
-
-	private final List<XmlRule> verbose;
+	private final List<XmlRule> xml;
 	private final List<String> arrow;
 
-	public DependencyRulesConfiguration(Log log, List<XmlRule> verbose, List<String> arrow) {
-		this.log = requireNonNull(log, "The argument 'log' must not be null.");
-		this.verbose = requireNonNull(verbose, "The argument 'verbose' must not be null.");
+	public DependencyRulesConfiguration(List<XmlRule> xml, List<String> arrow) {
+		this.xml = requireNonNull(xml, "The argument 'xml' must not be null.");
 		this.arrow = requireNonNull(arrow, "The argument 'arrow' must not be null.");
 	}
 
@@ -35,29 +29,26 @@ class DependencyRulesConfiguration {
 	 * @return the {@link DependencyJudge} matching the configuration
 	 */
 	public DependencyJudge createJudge() throws ConfigurationException {
-		if (log.isInfoEnabled()) {
-			log.info("Verbose rules:\n" + rulesToString(verbose));
-			log.info("Arrow rules:\n" + rulesToString(arrow));
-		}
-
 		DependencyJudgeBuilder dependencyJudgeBuilder =
 				new TypeNameHierarchyMapDependencyJudgeBuilder().withDefaultSeverity(Severity.FAIL);
-		addVerboseRulesToBuilder(verbose, dependencyJudgeBuilder);
+
+		addXmlRulesToBuilder(xml, dependencyJudgeBuilder);
+		addArrowRulesToBuilder(arrow, dependencyJudgeBuilder);
 
 		return dependencyJudgeBuilder.build();
 	}
 
-	static void addVerboseRulesToBuilder(List<XmlRule> verbose, DependencyJudgeBuilder dependencyJudgeBuilder)
+	static void addXmlRulesToBuilder(List<XmlRule> xml, DependencyJudgeBuilder dependencyJudgeBuilder)
 			throws ConfigurationException {
-		for (XmlRule rule : verbose) {
+		for (XmlRule rule : xml) {
 			dependencyJudgeBuilder.addDependency(rule.asDependencyRule());
 		}
 	}
 
-	private static <E> String rulesToString(Collection<E> rules) {
-		return rules.stream()
-				.map(Object::toString)
-				.collect(Collectors.joining("\n\t", "\t", "\n"));
+	static void addArrowRulesToBuilder(List<String> arrowRules, DependencyJudgeBuilder dependencyJudgeBuilder)
+			throws ConfigurationException {
+		for (String arrowRule : arrowRules)
+			ArrowRuleParser.parseRules(arrowRule).forEach(dependencyJudgeBuilder::addDependency);
 	}
 
 }

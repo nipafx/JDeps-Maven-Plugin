@@ -47,7 +47,6 @@ public class JdkInternalsMojo extends AbstractMojo {
 			return JdkInternalsExecutionService.execute(
 					buildOutputDirectory,
 					new DependencyRulesConfiguration(
-							getLog(),
 							emptyListIfNull(verboseDependencyRules),
 							emptyListIfNull(arrowDependencyRules))
 			);
