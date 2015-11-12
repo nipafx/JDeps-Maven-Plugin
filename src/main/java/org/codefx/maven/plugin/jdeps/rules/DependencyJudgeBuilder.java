@@ -16,7 +16,7 @@ public interface DependencyJudgeBuilder {
 	DependencyJudgeBuilder withDefaultSeverity(Severity defaultSeverity);
 
 	/**
-	 * Adds the specified dependency to the created judge.
+	 * Adds the specified dependency rule to the created judge.
 	 *
 	 * @param dependentName
 	 * 		fully qualified name of the type or package which depends on the the other
@@ -27,7 +27,19 @@ public interface DependencyJudgeBuilder {
 	 *
 	 * @return this builder
 	 */
-	DependencyJudgeBuilder addDependency(String dependentName, String dependencyName, Severity severity);
+	default DependencyJudgeBuilder addDependency(String dependentName, String dependencyName, Severity severity) {
+		return addDependency(DependencyRule.of(dependentName, dependencyName, severity));
+	}
+
+	/**
+	 * Adds the specified dependency rule to the created judge.
+	 *
+	 * @param rule
+	 * 		the rule to add
+	 *
+	 * @return this builder
+	 */
+	DependencyJudgeBuilder addDependency(DependencyRule rule);
 
 	/**
 	 * @return a new dependency judge

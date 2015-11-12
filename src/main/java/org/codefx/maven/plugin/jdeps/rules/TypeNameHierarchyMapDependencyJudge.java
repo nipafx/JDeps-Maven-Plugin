@@ -58,20 +58,17 @@ public class TypeNameHierarchyMapDependencyJudge implements DependencyJudge {
 		}
 
 		@Override
-		public DependencyJudgeBuilder addDependency(String dependentName, String dependencyName, Severity severity) {
-			requireNonNull(dependentName, "The argument 'dependentName' must not be null.");
-			requireNonNull(dependencyName, "The argument 'dependencyName' must not be null.");
-			requireNonNull(severity, "The argument 'severity' must not be null.");
+		public DependencyJudgeBuilder addDependency(DependencyRule rule) {
+			requireNonNull(rule, "The argument 'ruleName' must not be null.");
 
 			Map<String, Severity> mapForDependent =
-					dependencies.computeIfAbsent(dependentName, ignored -> new HashMap<>());
-			Severity previousSeverity = mapForDependent.put(dependencyName, severity);
+					dependencies.computeIfAbsent(rule.getDependent(), ignored -> new HashMap<>());
+			Severity previousSeverity = mapForDependent.put(rule.getDependency(), rule.getSeverity());
 
-			if (previousSeverity != null) {
+			if (previousSeverity != null && previousSeverity != rule.getSeverity()) {
 				String message = format(
-						"The dependencyName '{0} -> {1}' already had severity '{2}', "
-								+ "which was now overriden with '{3}'.",
-						dependentName, dependencyName, previousSeverity, severity);
+						"The dependency '{0} -> {1}' is defined with multiple severitues {2} and {3}.",
+						rule.getDependent(), rule.getDependency(), previousSeverity, rule.getSeverity());
 				throw new IllegalArgumentException(message);
 			}
 

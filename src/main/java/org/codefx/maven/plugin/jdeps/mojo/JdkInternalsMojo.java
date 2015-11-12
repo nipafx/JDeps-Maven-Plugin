@@ -31,7 +31,7 @@ public class JdkInternalsMojo extends AbstractMojo {
 	private List<String> arrowDependencyRules;
 
 	@Parameter
-	private List<Rule> verboseDependencyRules;
+	private List<XmlRule> verboseDependencyRules;
 
 	@Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true)
 	private File buildOutputDirectory;

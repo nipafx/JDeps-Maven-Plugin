@@ -12,38 +12,24 @@ public abstract class AbstractDependencyJudgeTest {
 	// #begin BUILDER
 
 	@Test(expected = NullPointerException.class)
-	public void withSeverity_severityNull_throwsException() {
-		builder().
-				withDefaultSeverity(null);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void addDependency_dependentNull_throwsException() {
-		builder().
-				withDefaultSeverity(Severity.FAIL)
-				.addDependency(null, "sun.misc.Unsafe", Severity.WARN);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void addDependency_dependencyNull_throwsException() {
-		builder().
-				withDefaultSeverity(Severity.FAIL)
-				.addDependency("com.foo.bar", null, Severity.WARN);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void addDependency_severityNull_throwsException() {
-		builder().
-				withDefaultSeverity(Severity.FAIL)
-				.addDependency("com.foo.bar", "sun.misc.Unsafe", null);
+	public void addDependency_ruleNull_throwsException() {
+		builder().addDependency(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void addDependency_alreadyDefined_throwsException() {
+	public void addDependency_alreadyDefinedWithDifferentSeverity_throwsException() {
 		builder().
 				withDefaultSeverity(Severity.FAIL)
-				.addDependency("com.foo.bar", "sun.misc.Unsafe", Severity.WARN)
-				.addDependency("com.foo.bar", "sun.misc.Unsafe", Severity.WARN);
+				.addDependency(DependencyRule.of("com.foo.bar", "sun.misc.Unsafe", Severity.INFORM))
+				.addDependency(DependencyRule.of("com.foo.bar", "sun.misc.Unsafe", Severity.WARN));
+	}
+
+	@Test
+	public void addDependency_alreadyDefinedWithSameSeverity_throwsException() {
+		builder().
+				withDefaultSeverity(Severity.FAIL)
+				.addDependency(DependencyRule.of("com.foo.bar", "sun.misc.Unsafe", Severity.WARN))
+				.addDependency(DependencyRule.of("com.foo.bar", "sun.misc.Unsafe", Severity.WARN));
 	}
 
 	@Test(expected = IllegalStateException.class)

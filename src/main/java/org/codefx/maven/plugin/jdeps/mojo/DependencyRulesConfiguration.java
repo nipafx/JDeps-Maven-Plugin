@@ -22,10 +22,10 @@ class DependencyRulesConfiguration {
 
 	private final Log log;
 
-	private final List<Rule> verbose;
+	private final List<XmlRule> verbose;
 	private final List<String> arrow;
 
-	public DependencyRulesConfiguration(Log log, List<Rule> verbose, List<String> arrow) {
+	public DependencyRulesConfiguration(Log log, List<XmlRule> verbose, List<String> arrow) {
 		this.log = requireNonNull(log, "The argument 'log' must not be null.");
 		this.verbose = requireNonNull(verbose, "The argument 'verbose' must not be null.");
 		this.arrow = requireNonNull(arrow, "The argument 'arrow' must not be null.");
@@ -47,11 +47,10 @@ class DependencyRulesConfiguration {
 		return dependencyJudgeBuilder.build();
 	}
 
-	private static void addVerboseRulesToBuilder(List<Rule> verbose, DependencyJudgeBuilder dependencyJudgeBuilder)
+	static void addVerboseRulesToBuilder(List<XmlRule> verbose, DependencyJudgeBuilder dependencyJudgeBuilder)
 			throws ConfigurationException {
-		for (Rule rule : verbose) {
-			rule.checkValidity();
-			dependencyJudgeBuilder.addDependency(rule.getDependent(), rule.getDependency(), rule.getSeverity());
+		for (XmlRule rule : verbose) {
+			dependencyJudgeBuilder.addDependency(rule.asDependencyRule());
 		}
 	}
 
