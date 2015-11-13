@@ -2,6 +2,7 @@ package org.codefx.maven.plugin.jdeps.mojo;
 
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudge;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudgeBuilder;
+import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.codefx.maven.plugin.jdeps.rules.TypeNameHierarchyMapDependencyJudge
 		.TypeNameHierarchyMapDependencyJudgeBuilder;
@@ -10,6 +11,7 @@ import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
+import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
 
 /**
  * Captures the MOJO configuration that pertains the dependency rules and {@link #createJudge() creates} the
@@ -38,17 +40,49 @@ class DependencyRulesConfiguration {
 		return dependencyJudgeBuilder.build();
 	}
 
-	static void addXmlRulesToBuilder(List<XmlRule> xml, DependencyJudgeBuilder dependencyJudgeBuilder)
+	static void addXmlRulesToBuilder(List<XmlRule> xmlRules, DependencyJudgeBuilder dependencyJudgeBuilder)
 			throws ConfigurationException {
-		for (XmlRule rule : xml) {
-			dependencyJudgeBuilder.addDependency(rule.asDependencyRule());
+		logStartAddingRules(xmlRules, "XML");
+
+		for (XmlRule rule : xmlRules) {
+			DependencyRule dependencyRule = rule.asDependencyRule();
+			dependencyJudgeBuilder.addDependency(dependencyRule);
+			logAddedRule(dependencyRule);
 		}
+
+		logDoneAddingRules(xmlRules, "XML");
 	}
 
 	static void addArrowRulesToBuilder(List<String> arrowRules, DependencyJudgeBuilder dependencyJudgeBuilder)
 			throws ConfigurationException {
-		for (String arrowRule : arrowRules)
-			ArrowRuleParser.parseRules(arrowRule).forEach(dependencyJudgeBuilder::addDependency);
+		logStartAddingRules(arrowRules, "arrow");
+
+		for (String arrowRule : arrowRules) {
+			ArrowRuleParser
+					.parseRules(arrowRule)
+					.forEach(rule -> {
+						dependencyJudgeBuilder.addDependency(rule);
+						logAddedRule(rule);
+					});
+		}
+
+		logDoneAddingRules(arrowRules, "arrow");
+	}
+
+	private static void logStartAddingRules(List<?> rules, String ruleName) {
+		if (!rules.isEmpty())
+			logger().debug("Adding configured " + ruleName + " rules:");
+	}
+
+	private static void logAddedRule(DependencyRule dependencyRule) {
+		logger().debug("\t" + dependencyRule);
+	}
+
+	private static void logDoneAddingRules(List<?> rules, String ruleName) {
+		if (rules.isEmpty())
+			logger().info("No " + ruleName + " rules configured.");
+		else
+			logger().info(rules.size() + " " + ruleName + " rules configured and added.");
 	}
 
 }
