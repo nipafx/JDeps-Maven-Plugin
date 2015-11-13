@@ -2,10 +2,8 @@ package org.codefx.maven.plugin.jdeps.result;
 
 import com.google.common.collect.Sets;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.codefx.maven.plugin.jdeps.dependency.Violation;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -19,6 +17,7 @@ import static java.text.MessageFormat.format;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.summingInt;
+import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
 
 /**
  * A {@link ResultOutputStrategy} that uses the Mojos facilities to report violations, i.e. the logger and exceptions.
@@ -36,18 +35,6 @@ public class MojoResultOutputStrategy implements ResultOutputStrategy {
 	private static final String MESSAGE_NO_DEPENDENCIES =
 			"\nJDeps reported no dependencies on JDK-internal APIs.";
 
-	private final Log log;
-
-	/**
-	 * Creates a new output strategy.
-	 *
-	 * @param log
-	 * 		the log to use for reporting violations
-	 */
-	public MojoResultOutputStrategy(Log log) {
-		this.log = Objects.requireNonNull(log, "The argument 'log' must not be null.");
-	}
-
 	@Override
 	public void output(Result result) throws MojoFailureException {
 		int violationsCount = logNumberOfViolationsToIgnore(result);
@@ -57,19 +44,22 @@ public class MojoResultOutputStrategy implements ResultOutputStrategy {
 
 		// note that the previous line might have thrown an exception in which case this is never executed
 		if (violationsCount == 0)
-			logZeroDependencies(log);
+			logZeroDependencies(message -> logger().info(message));
 	}
 
 	private int logNumberOfViolationsToIgnore(Result result) {
-		return logViolations(result.violationsToIgnore(), MESSAGE_IGNORE_DEPENDENCIES, log::info);
+		return logViolations(
+				result.violationsToIgnore(), MESSAGE_IGNORE_DEPENDENCIES, message -> logger().info(message));
 	}
 
 	private int logViolationsToInform(Result result) {
-		return logViolations(result.violationsToInform(), MESSAGE_INFORM_DEPENDENCIES, log::info);
+		return logViolations(
+				result.violationsToInform(), MESSAGE_INFORM_DEPENDENCIES, message -> logger().info(message));
 	}
 
 	private int logViolationsToWarn(Result result) {
-		return logViolations(result.violationsToWarn(), MESSAGE_WARN_DEPENDENCIES, log::warn);
+		return logViolations(
+				result.violationsToWarn(), MESSAGE_WARN_DEPENDENCIES, message -> logger().warn(message));
 	}
 
 	private int throwExceptionForViolationsToFail(Result result) throws MojoFailureException {
@@ -100,8 +90,8 @@ public class MojoResultOutputStrategy implements ResultOutputStrategy {
 		return countAndMessage.first;
 	}
 
-	private void logZeroDependencies(Log log) {
-		log.info(MESSAGE_NO_DEPENDENCIES);
+	private void logZeroDependencies(Consumer<String> log) {
+		log.accept(MESSAGE_NO_DEPENDENCIES);
 	}
 
 	@FunctionalInterface

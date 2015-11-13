@@ -38,8 +38,14 @@ public class JdkInternalsMojo extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		MojoLogging.registerLogger(this::getLog);
+		executePlugin();
+		MojoLogging.unregisterLogger();
+	}
+
+	private void executePlugin() throws MojoExecutionException, MojoFailureException {
 		Result result = executeJDeps();
-		new MojoResultOutputStrategy(getLog()).output(result);
+		new MojoResultOutputStrategy().output(result);
 	}
 
 	private Result executeJDeps() throws MojoExecutionException {
