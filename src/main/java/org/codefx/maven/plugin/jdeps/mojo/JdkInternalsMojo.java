@@ -28,10 +28,10 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE;
 public class JdkInternalsMojo extends AbstractMojo {
 
 	@Parameter
-	private List<String> arrowDependencyRules;
+	private List<XmlRule> xmlDependencyRules;
 
 	@Parameter
-	private List<XmlRule> verboseDependencyRules;
+	private List<String> arrowDependencyRules;
 
 	@Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true)
 	private File buildOutputDirectory;
@@ -53,7 +53,7 @@ public class JdkInternalsMojo extends AbstractMojo {
 			return JdkInternalsExecutionService.execute(
 					buildOutputDirectory,
 					new DependencyRulesConfiguration(
-							emptyListIfNull(verboseDependencyRules),
+							emptyListIfNull(xmlDependencyRules),
 							emptyListIfNull(arrowDependencyRules))
 			);
 		} catch (CommandLineException ex) {
