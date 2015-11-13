@@ -14,12 +14,6 @@ public class DependenyRuleTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	/*
-	 * If only 'Rule.checkValidity()' were accessible, we would have to have the same checks for the dependent and the
-	 * dependency. To prevent this useless repetition 'Rule' exposes 'checkName'. So we only have to test its
-	 * functionality for the dependent or the dependency (even though this is slightly awkward) - we pick the former.
-	 */
-
 	@Test
 	public void checkName_nameNull_throwsException() throws Exception {
 		thrown.expect(IllegalArgumentException.class);

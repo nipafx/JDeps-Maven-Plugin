@@ -5,7 +5,7 @@ import org.codefx.maven.plugin.jdeps.rules.TypeNameHierarchyMapDependencyJudge.T
 /**
  * Tests for {@link TypeNameHierarchyMapDependencyJudge}.
  */
-public class TypeNameHierarchyMapDependencyJudgeTest extends AbstractDependencyJudgeTest {
+public class TypeNameHierarchyMapDependencyJudgeTest extends AbstractHierarchicalDependencyJudgeTest {
 
 	@Override
 	protected DependencyJudgeBuilder builder() {

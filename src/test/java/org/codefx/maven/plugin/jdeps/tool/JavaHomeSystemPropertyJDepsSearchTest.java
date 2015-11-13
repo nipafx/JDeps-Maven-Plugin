@@ -1,9 +1,9 @@
 package org.codefx.maven.plugin.jdeps.tool;
 
+import org.junit.Test;
+
 import java.nio.file.Path;
 import java.util.Optional;
-
-import org.junit.Test;
 
 /**
  * Tests {@link JavaHomeSystemPropertyJDepsSearch}.

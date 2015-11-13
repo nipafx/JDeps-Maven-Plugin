@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * Tests the class {@link InternalTypeLineParser}.
  */
-@SuppressWarnings("javadoc")
 public class InternalTypeLineParserTest {
 
 	private InternalTypeLineParser parser;

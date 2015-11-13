@@ -12,12 +12,13 @@ import java.io.StringReader;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 /**
  * Tests the class {@link ViolationParser}.
  */
-@SuppressWarnings("javadoc")
 public class ViolationParserTest {
 
 	private ViolationParser parser;

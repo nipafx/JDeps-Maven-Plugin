@@ -12,6 +12,9 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.codefx.maven.plugin.jdeps.mojo.ArrowRuleParser.parseRules;
 
+/**
+ * Tests {@link ArrowRuleParser}.
+ */
 public class ArrowRuleParserTest {
 
 	@Rule
@@ -50,6 +53,17 @@ public class ArrowRuleParserTest {
 
 		parseRules("com.foo.Bar -> sun.misc.Unsafe: WARN\n"
 				+ "fooBar");
+	}
+
+	@Test
+	public void parseRules_invalidRuleInOneOfManyLines_throwsException() throws Exception {
+		thrown.expect(ConfigurationException.class);
+		thrown.expectMessage("The line 'fooBar' defines no valid rule.");
+
+		parseRules("com.foo.Bar -> sun.misc.Unsafe: WARN\n"
+				+ "fooBar\n"
+				+ "com.foo.Bar -> sun.misc: WARN\n"
+				+ "com.foo.Bar -> sun: WARN\n");
 	}
 
 	@Test

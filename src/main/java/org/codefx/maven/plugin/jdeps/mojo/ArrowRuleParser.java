@@ -59,10 +59,11 @@ public class ArrowRuleParser {
 		if (ruleMatcher.find())
 			rule = Optional.of(extractRuleFromCurrentMatch(ruleMatcher::group));
 		else
-			throw new ConfigurationException(format(ERROR_MESSAGE_LINE_INVALID_RULE, ruleLine));
+			throw new ConfigurationException(format(ERROR_MESSAGE_LINE_INVALID_RULE, ruleLine.trim()));
 
+		// disallow two rules in the same line
 		if (ruleMatcher.find())
-			throw new ConfigurationException(format(ERROR_MESSAGE_MULTIPLE_RULES, ruleLine));
+			throw new ConfigurationException(format(ERROR_MESSAGE_MULTIPLE_RULES, ruleLine.trim()));
 
 		return rule;
 	}

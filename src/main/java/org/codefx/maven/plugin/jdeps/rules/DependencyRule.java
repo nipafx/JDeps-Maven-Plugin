@@ -55,6 +55,11 @@ public final class DependencyRule {
 		return new DependencyRule(dependent, dependency, severity);
 	}
 
+	/*
+	 * If only 'checkValidity()' were accessible, we would have to have the same checks for the dependent and the
+	 * dependency. To prevent this useless repetition 'DependencyRule' exposes 'checkName'.
+	 */
+
 	/**
 	 * Checks whether the specified name is a valid Java identifier for a package or class.
 	 *

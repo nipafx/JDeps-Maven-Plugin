@@ -1,11 +1,9 @@
 package org.codefx.maven.plugin.jdeps.mojo;
 
-import org.apache.maven.plugin.logging.Log;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudgeBuilder;
 import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +29,7 @@ public class DependencyRulesConfigurationTest {
 	public void createDependencyJudgeBuilder() {
 		dependencyJudgeBuilder = mock(DependencyJudgeBuilder.class);
 	}
-	
+
 	// #begin XML RULES
 
 	@Test

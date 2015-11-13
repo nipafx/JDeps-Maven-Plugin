@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Abstract superclass for tests of hierarchical {@link DependencyJudge} implementations.
  */
-public abstract class AbstractDependencyJudgeTest {
+public abstract class AbstractHierarchicalDependencyJudgeTest {
 
 	// #begin BUILDER
 
