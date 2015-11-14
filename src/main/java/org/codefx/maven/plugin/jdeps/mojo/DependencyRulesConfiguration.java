@@ -3,10 +3,9 @@ package org.codefx.maven.plugin.jdeps.mojo;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudge;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudgeBuilder;
 import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
+import org.codefx.maven.plugin.jdeps.rules.HierarchicalMapDependencyJudge.HierarchicalMapDependencyJudgeBuilder;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.codefx.maven.plugin.jdeps.rules.SimpleDependencyJudge;
-import org.codefx.maven.plugin.jdeps.rules.TypeNameHierarchyMapDependencyJudge
-		.TypeNameHierarchyMapDependencyJudgeBuilder;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 
 import java.util.List;
@@ -38,7 +37,7 @@ class DependencyRulesConfiguration {
 			return new SimpleDependencyJudge(defaultSeverity);
 
 		DependencyJudgeBuilder dependencyJudgeBuilder =
-				new TypeNameHierarchyMapDependencyJudgeBuilder().withDefaultSeverity(defaultSeverity);
+				new HierarchicalMapDependencyJudgeBuilder().withDefaultSeverity(defaultSeverity);
 
 		addXmlRulesToBuilder(xml, dependencyJudgeBuilder);
 		addArrowRulesToBuilder(arrow, dependencyJudgeBuilder);

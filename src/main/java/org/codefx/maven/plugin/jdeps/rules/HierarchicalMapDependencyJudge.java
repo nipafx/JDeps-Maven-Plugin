@@ -10,12 +10,12 @@ import static java.util.Objects.requireNonNull;
  * A {@link DependencyJudge} based on a bimap {@code (dependency, dependant) -> severity} and using
  * {@link TypeNameHierarchy}-s to identify the best match.
  */
-public class TypeNameHierarchyMapDependencyJudge implements DependencyJudge {
+public class HierarchicalMapDependencyJudge implements DependencyJudge {
 
 	private final Severity defaultSeverity;
 	private final Map<String, Map<String, Severity>> dependencies;
 
-	private TypeNameHierarchyMapDependencyJudge(
+	private HierarchicalMapDependencyJudge(
 			Severity defaultSeverity, Map<String, Map<String, Severity>> dependencies) {
 		this.defaultSeverity = requireNonNull(defaultSeverity, "The argument 'defaultSeverity' must not be null.");
 		this.dependencies = requireNonNull(dependencies, "The argument 'dependencies' must not be null.");
@@ -39,13 +39,13 @@ public class TypeNameHierarchyMapDependencyJudge implements DependencyJudge {
 		return defaultSeverity;
 	}
 
-	public static class TypeNameHierarchyMapDependencyJudgeBuilder implements DependencyJudgeBuilder {
+	public static class HierarchicalMapDependencyJudgeBuilder implements DependencyJudgeBuilder {
 
 		private Severity defaultSeverity;
 		private final Map<String, Map<String, Severity>> dependencies;
 		private boolean alreadyBuilt;
 
-		public TypeNameHierarchyMapDependencyJudgeBuilder() {
+		public HierarchicalMapDependencyJudgeBuilder() {
 			defaultSeverity = Severity.FAIL;
 			dependencies = new HashMap<>();
 			alreadyBuilt = false;
@@ -79,7 +79,7 @@ public class TypeNameHierarchyMapDependencyJudge implements DependencyJudge {
 			if (alreadyBuilt)
 				throw new IllegalStateException("A builder can only be used once.");
 			alreadyBuilt = true;
-			return new TypeNameHierarchyMapDependencyJudge(defaultSeverity, dependencies);
+			return new HierarchicalMapDependencyJudge(defaultSeverity, dependencies);
 		}
 
 	}
