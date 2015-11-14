@@ -19,10 +19,12 @@ import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
  */
 class DependencyRulesConfiguration {
 
+	private final Severity defaultSeverity;
 	private final List<XmlRule> xml;
 	private final List<String> arrow;
 
-	public DependencyRulesConfiguration(List<XmlRule> xml, List<String> arrow) {
+	public DependencyRulesConfiguration(Severity defaultSeverity, List<XmlRule> xml, List<String> arrow) {
+		this.defaultSeverity = requireNonNull(defaultSeverity, "The argument 'defaultSeverity' must not be null.");
 		this.xml = requireNonNull(xml, "The argument 'xml' must not be null.");
 		this.arrow = requireNonNull(arrow, "The argument 'arrow' must not be null.");
 	}
@@ -32,7 +34,7 @@ class DependencyRulesConfiguration {
 	 */
 	public DependencyJudge createJudge() throws ConfigurationException {
 		DependencyJudgeBuilder dependencyJudgeBuilder =
-				new TypeNameHierarchyMapDependencyJudgeBuilder().withDefaultSeverity(Severity.FAIL);
+				new TypeNameHierarchyMapDependencyJudgeBuilder().withDefaultSeverity(defaultSeverity);
 
 		addXmlRulesToBuilder(xml, dependencyJudgeBuilder);
 		addArrowRulesToBuilder(arrow, dependencyJudgeBuilder);

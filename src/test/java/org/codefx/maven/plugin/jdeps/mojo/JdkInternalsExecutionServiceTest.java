@@ -2,6 +2,7 @@ package org.codefx.maven.plugin.jdeps.mojo;
 
 import org.codefx.maven.plugin.jdeps.result.Result;
 import org.codefx.maven.plugin.jdeps.result.SystemOutResultOutputStrategy;
+import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class JdkInternalsExecutionServiceTest {
 	public void execute_pathsExist_returnsViolations() throws Exception {
 		Result result = JdkInternalsExecutionService.execute(
 				new File(PATH_TO_SCANNED_FOLDER),
-				new DependencyRulesConfiguration(Collections.emptyList(), Collections.emptyList()));
+				new DependencyRulesConfiguration(Severity.WARN, Collections.emptyList(), Collections.emptyList()));
 		new SystemOutResultOutputStrategy().output(result);
 	}
 
