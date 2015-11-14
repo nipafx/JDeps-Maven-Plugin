@@ -6,9 +6,14 @@ package org.codefx.maven.plugin.jdeps.rules;
 public enum Severity {
 
 	/**
-	 * Ignore individual dependencies, maybe output a summary.
+	 * Ignore individual dependencies.
 	 */
 	IGNORE,
+
+	/**
+	 * Summarize these dependencies.
+	 */
+	SUMMARIZE,
 
 	/**
 	 * Inform about individual dependencies.

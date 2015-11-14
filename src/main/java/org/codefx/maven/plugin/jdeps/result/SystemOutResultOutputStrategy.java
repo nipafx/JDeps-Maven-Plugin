@@ -12,8 +12,8 @@ public class SystemOutResultOutputStrategy implements ResultOutputStrategy {
 
 	@Override
 	public void output(Result result) throws MojoFailureException {
-		output("IGNORE", result.violationsToIgnore());
-		output("INFORM", result.violationsToInform());
+		output("SUMMARIZE:", result.violationsToSummarize());
+		output("INFORM:", result.violationsToInform());
 		output("WARN:", result.violationsToWarn());
 		output("FAIL:", result.violationsToFail());
 	}

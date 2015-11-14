@@ -24,7 +24,7 @@ import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
  */
 public class MojoResultOutputStrategy implements ResultOutputStrategy {
 
-	private static final String MESSAGE_IGNORE_DEPENDENCIES =
+	private static final String MESSAGE_SUMMARIZE_DEPENDENCIES =
 			"\nJDeps reported {0} dependencies on JDK-internal APIs that are configured to be ignored.";
 	private static final String MESSAGE_INFORM_DEPENDENCIES =
 			"\nJDeps reported {0} dependencies on JDK-internal APIs that are configured to be logged:\n{1}";
@@ -37,7 +37,7 @@ public class MojoResultOutputStrategy implements ResultOutputStrategy {
 
 	@Override
 	public void output(Result result) throws MojoFailureException {
-		int violationsCount = logNumberOfViolationsToIgnore(result);
+		int violationsCount = logNumberOfViolationsToSummarize(result);
 		violationsCount += logViolationsToInform(result);
 		violationsCount += logViolationsToWarn(result);
 		violationsCount += throwExceptionForViolationsToFail(result);
@@ -47,9 +47,10 @@ public class MojoResultOutputStrategy implements ResultOutputStrategy {
 			logZeroDependencies(message -> logger().info(message));
 	}
 
-	private int logNumberOfViolationsToIgnore(Result result) {
-		return logViolations(
-				result.violationsToIgnore(), MESSAGE_IGNORE_DEPENDENCIES, message -> logger().info(message));
+	private int logNumberOfViolationsToSummarize(Result result) {
+		return countAndIfViolationsExist(
+				result.violationsToSummarize(),
+				(count, ignoredList) -> logger().info(format(MESSAGE_SUMMARIZE_DEPENDENCIES, count)));
 	}
 
 	private int logViolationsToInform(Result result) {
@@ -65,15 +66,15 @@ public class MojoResultOutputStrategy implements ResultOutputStrategy {
 	private int throwExceptionForViolationsToFail(Result result) throws MojoFailureException {
 		return countAndIfViolationsExist(
 				result.violationsToFail(),
-				(count, message) -> {
-					throw new MojoFailureException(format(MESSAGE_FAIL_DEPENDENCIES, count, message));
+				(count, list) -> {
+					throw new MojoFailureException(format(MESSAGE_FAIL_DEPENDENCIES, count, list));
 				});
 	}
 
 	private int logViolations(Stream<Violation> violations, String messageFormat, Consumer<String> log) {
 		return countAndIfViolationsExist(
 				violations,
-				(count, message) -> log.accept(format(messageFormat, count, message)));
+				(count, list) -> log.accept(format(messageFormat, count, list)));
 	}
 
 	private <E extends Exception> int countAndIfViolationsExist(
