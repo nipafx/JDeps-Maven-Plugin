@@ -4,6 +4,7 @@ import org.codefx.maven.plugin.jdeps.rules.DependencyJudge;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudgeBuilder;
 import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
+import org.codefx.maven.plugin.jdeps.rules.SimpleDependencyJudge;
 import org.codefx.maven.plugin.jdeps.rules.TypeNameHierarchyMapDependencyJudge
 		.TypeNameHierarchyMapDependencyJudgeBuilder;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
@@ -33,6 +34,9 @@ class DependencyRulesConfiguration {
 	 * @return the {@link DependencyJudge} matching the configuration
 	 */
 	public DependencyJudge createJudge() throws ConfigurationException {
+		if (xml.isEmpty() && arrow.isEmpty())
+			return new SimpleDependencyJudge(defaultSeverity);
+
 		DependencyJudgeBuilder dependencyJudgeBuilder =
 				new TypeNameHierarchyMapDependencyJudgeBuilder().withDefaultSeverity(defaultSeverity);
 
