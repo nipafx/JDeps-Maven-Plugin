@@ -18,26 +18,35 @@ import static java.util.stream.Collectors.toList;
 /**
  * A violation whose dependencies are annotated with their severity.
  */
-class AnnotatedViolation {
+final class AnnotatedViolation {
 
 	private final Type dependent;
 	private ImmutableMap<Severity, ImmutableList<InternalType>> internalDependencies;
 
-	public AnnotatedViolation(Type dependent, ImmutableList<AnnotatedInternalType> internalDependencies) {
-		this.dependent = requireNonNull(dependent, "The argument 'dependent' must not be null.");
+	private AnnotatedViolation(
+			Type dependent,
+			ImmutableMap<Severity, ImmutableList<InternalType>> internalDependencies) {
+		this.dependent = dependent;
+		this.internalDependencies = internalDependencies;
+	}
+
+	public static AnnotatedViolation of(Type dependent, ImmutableList<AnnotatedInternalType> internalDependencies) {
+		requireNonNull(dependent, "The argument 'dependent' must not be null.");
 		requireNonNull(internalDependencies, "The argument 'internalDependencies' must not be null.");
 		if (internalDependencies.size() == 0)
 			throw new IllegalArgumentException(
 					"A violation must contain at least one internal dependency.");
 
-		this.internalDependencies = internalDependencies.stream().collect(
-				collectingAndThen(
-						groupingBy(AnnotatedInternalType::getSeverity,
-								collectingAndThen(mapping(
-										AnnotatedInternalType::getType,
-										toList()),
-										ImmutableList::copyOf)),
-						ImmutableMap::copyOf));
+		ImmutableMap<Severity, ImmutableList<InternalType>> internalDependenciesMap =
+				internalDependencies.stream().collect(
+						collectingAndThen(
+								groupingBy(AnnotatedInternalType::getSeverity,
+										collectingAndThen(mapping(
+												AnnotatedInternalType::getType,
+												toList()),
+												ImmutableList::copyOf)),
+								ImmutableMap::copyOf));
+		return new AnnotatedViolation(dependent, internalDependenciesMap);
 	}
 
 	/**

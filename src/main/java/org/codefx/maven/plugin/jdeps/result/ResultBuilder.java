@@ -44,7 +44,7 @@ public class ResultBuilder {
 				.getInternalDependencies().stream()
 				.map(dependency -> annotateWithSeverity(dependent, dependency))
 				.forEach(internalDependencies::add);
-		violations.add(new AnnotatedViolation(dependent, internalDependencies.build()));
+		violations.add(AnnotatedViolation.of(dependent, internalDependencies.build()));
 
 		return this;
 	}
