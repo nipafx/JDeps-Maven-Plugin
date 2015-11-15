@@ -93,6 +93,11 @@ public class DependenyRuleTest {
 		letRuleCheckName(faultyName);
 	}
 
+	@Test
+	public void checkName_nameIsWildcard_throwsNoException() throws Exception {
+		letRuleCheckName(DependencyRule.ALL_TYPES_WILDCARD);
+	}
+
 	private static void letRuleCheckName(String faultyName) throws IllegalArgumentException {
 		DependencyRule.checkName(faultyName, format("(%s -> sun.misc.Unsafe: FAIL)", faultyName), "dependent");
 	}

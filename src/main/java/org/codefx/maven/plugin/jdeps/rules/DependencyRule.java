@@ -6,6 +6,8 @@ import static java.lang.String.format;
 
 public final class DependencyRule {
 
+	public static final String ALL_TYPES_WILDCARD = "*";
+
 	private static final String ERROR_MESSAGE_MISSING_TYPE = "The rule %s defines no %s.";
 	private static final String ERROR_MESSAGE_MISSING_SEVERITY = "The rule %s defines no severity.";
 
@@ -76,6 +78,9 @@ public final class DependencyRule {
 	static void checkName(String name, String ruleAsString, String role) throws IllegalArgumentException {
 		if (name == null || name.isEmpty())
 			throw new IllegalArgumentException(format(ERROR_MESSAGE_MISSING_TYPE, ruleAsString, role));
+
+		if (name.equals(ALL_TYPES_WILDCARD))
+			return;
 
 		for (String namePart : name.split("\\.")) {
 			if (namePart == null || namePart.isEmpty())

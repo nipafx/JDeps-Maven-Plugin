@@ -1,7 +1,11 @@
 package org.codefx.maven.plugin.jdeps.rules;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.text.MessageFormat.format;
 import static java.util.Objects.requireNonNull;
@@ -27,21 +31,28 @@ public class MapDependencyJudge implements DependencyJudge {
 
 	@Override
 	public Severity judgeSeverity(String dependentName, String dependencyName) {
-		for (String dependentNamePart : hierarchyFor(dependentName))
-			for (String dependencyNamePart : hierarchyFor(dependencyName)) {
-				Map<String, Severity> mapForDependent = dependencies.get(dependentNamePart);
-				if (mapForDependent != null) {
-					Severity severity = mapForDependent.get(dependencyNamePart);
-					if (severity != null)
-						return severity;
-				}
+		// the order of the two loops is crucial;
+		// checking all dependency names before continuing with the next dependent name yields the desired behavior of
+		// finding the best matching dependent that defines a rule for the dependency
+		for (String dependentNamePart : namesFor(dependentName))
+			for (String dependencyNamePart : namesFor(dependencyName)) {
+				Optional<Severity> severity = tryGetSeverityFor(dependentNamePart, dependencyNamePart);
+				if (severity.isPresent())
+					return severity.get();
 			}
 
 		return defaultSeverity;
 	}
 
-	private TypeNameHierarchy hierarchyFor(String dependentName) {
-		return TypeNameHierarchy.forFullyQualifiedName(dependentName, packageInclusion);
+	private Optional<Severity> tryGetSeverityFor(String dependent, String dependency) {
+		return Optional.ofNullable(dependencies.get(dependent))
+				.map(mapForDependent -> mapForDependent.get(dependency));
+	}
+
+	private Iterable<String> namesFor(String dependentName) {
+		Iterable<String> typeNameHierarchy = TypeNameHierarchy.forFullyQualifiedName(dependentName, packageInclusion);
+		Iterable<String> wildcard = () -> Iterators.singletonIterator(DependencyRule.ALL_TYPES_WILDCARD);
+		return Iterables.concat(typeNameHierarchy, wildcard);
 	}
 
 	public static class MapDependencyJudgeBuilder implements DependencyJudgeBuilder {

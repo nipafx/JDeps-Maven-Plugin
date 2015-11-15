@@ -216,6 +216,42 @@ public abstract class AbstractDependencyJudgeTest {
 		assertThat(judge.judgeSeverity("com.foo.Bar", "sun.misc.Unsafe.Inner")).isSameAs(Severity.WARN);
 	}
 
+	@Test
+	public void judgeSeverity_dependentCoveredByWildcardRule_ruleIsApplied() {
+		DependencyJudge judge = builder().
+				withDefaultSeverity(Severity.INFORM)
+				.addDependency(DependencyRule.ALL_TYPES_WILDCARD, "sun.misc.Unsafe", Severity.FAIL)
+				.build();
+
+		assertThat(judge.judgeSeverity("com.foo.Bar", "sun.misc.Unsafe")).isSameAs(Severity.FAIL);
+		assertThat(judge.judgeSeverity("net.Foo", "sun.misc.Unsafe")).isSameAs(Severity.FAIL);
+		assertThat(judge.judgeSeverity("org", "sun.misc.Unsafe")).isSameAs(Severity.FAIL);
+	}
+
+	@Test
+	public void judgeSeverity_dependencyCoveredByWildcardRule_ruleIsApplied() {
+		DependencyJudge judge = builder().
+				withDefaultSeverity(Severity.INFORM)
+				.addDependency("com.foo.Bar", DependencyRule.ALL_TYPES_WILDCARD, Severity.FAIL)
+				.build();
+
+		assertThat(judge.judgeSeverity("com.foo.Bar", "sun.misc.Unsafe")).isSameAs(Severity.FAIL);
+		assertThat(judge.judgeSeverity("com.foo.Bar", "sun.misc.BASE64Encoder")).isSameAs(Severity.FAIL);
+		assertThat(judge.judgeSeverity("com.foo.Bar", "sun.")).isSameAs(Severity.FAIL);
+	}
+
+	@Test
+	public void judgeSeverity_bothDependenciesCoveredByWildcardRule_ruleIsApplied() {
+		DependencyJudge judge = builder().
+				withDefaultSeverity(Severity.INFORM)
+				.addDependency(DependencyRule.ALL_TYPES_WILDCARD, DependencyRule.ALL_TYPES_WILDCARD, Severity.FAIL)
+				.build();
+
+		assertThat(judge.judgeSeverity("com.foo.Bar", "sun.misc.Unsafe")).isSameAs(Severity.FAIL);
+		assertThat(judge.judgeSeverity("com.foo.Bar", "sun.")).isSameAs(Severity.FAIL);
+		assertThat(judge.judgeSeverity("com", "sun.misc.BASE64Encoder")).isSameAs(Severity.FAIL);
+	}
+
 	// #end JUDGE
 
 	/**
