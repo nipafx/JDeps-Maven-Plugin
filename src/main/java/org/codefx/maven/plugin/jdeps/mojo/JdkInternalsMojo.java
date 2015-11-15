@@ -7,6 +7,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codefx.maven.plugin.jdeps.result.MojoResultOutputStrategy;
 import org.codefx.maven.plugin.jdeps.result.Result;
+import org.codefx.maven.plugin.jdeps.rules.PackageInclusion;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -27,6 +28,9 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE;
 		defaultPhase = VERIFY,
 		requiresDependencyResolution = COMPILE)
 public class JdkInternalsMojo extends AbstractMojo {
+
+	@Parameter
+	private PackageInclusion packages = PackageInclusion.FLAT;
 
 	@Parameter
 	private Severity defaultSeverity = Severity.WARN;
@@ -57,6 +61,7 @@ public class JdkInternalsMojo extends AbstractMojo {
 			return JdkInternalsExecutionService.execute(
 					buildOutputDirectory,
 					new DependencyRulesConfiguration(
+							packages,
 							defaultSeverity,
 							emptyListIfNull(xmlDependencyRules),
 							emptyListIfNull(arrowDependencyRules))

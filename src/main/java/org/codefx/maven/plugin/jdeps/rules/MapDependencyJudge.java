@@ -10,26 +10,25 @@ import static java.util.Objects.requireNonNull;
  * A {@link DependencyJudge} based on a bimap {@code (dependency, dependant) -> severity} and using
  * {@link TypeNameHierarchy}-s to identify the best match.
  */
-public class HierarchicalMapDependencyJudge implements DependencyJudge {
+public class MapDependencyJudge implements DependencyJudge {
 
+	private final PackageInclusion packageInclusion;
 	private final Severity defaultSeverity;
 	private final Map<String, Map<String, Severity>> dependencies;
 
-	private HierarchicalMapDependencyJudge(
-			Severity defaultSeverity, Map<String, Map<String, Severity>> dependencies) {
+	private MapDependencyJudge(
+			PackageInclusion packageInclusion,
+			Severity defaultSeverity,
+			Map<String, Map<String, Severity>> dependencies) {
+		this.packageInclusion = requireNonNull(packageInclusion, "The argument 'packageInclusion' must not be null.");
 		this.defaultSeverity = requireNonNull(defaultSeverity, "The argument 'defaultSeverity' must not be null.");
 		this.dependencies = requireNonNull(dependencies, "The argument 'dependencies' must not be null.");
 	}
 
 	@Override
 	public Severity judgeSeverity(String dependentName, String dependencyName) {
-		TypeNameHierarchy dependentNameHierarchy =
-				TypeNameHierarchy.forFullyQualifiedName(dependentName, PackageInclusion.HIERARCHICAL);
-		TypeNameHierarchy dependencyNameHierarchy =
-				TypeNameHierarchy.forFullyQualifiedName(dependencyName, PackageInclusion.HIERARCHICAL);
-
-		for (String dependentNamePart : dependentNameHierarchy)
-			for (String dependencyNamePart : dependencyNameHierarchy) {
+		for (String dependentNamePart : hierarchyFor(dependentName))
+			for (String dependencyNamePart : hierarchyFor(dependencyName)) {
 				Map<String, Severity> mapForDependent = dependencies.get(dependentNamePart);
 				if (mapForDependent != null) {
 					Severity severity = mapForDependent.get(dependencyNamePart);
@@ -41,16 +40,31 @@ public class HierarchicalMapDependencyJudge implements DependencyJudge {
 		return defaultSeverity;
 	}
 
-	public static class HierarchicalMapDependencyJudgeBuilder implements DependencyJudgeBuilder {
+	private TypeNameHierarchy hierarchyFor(String dependentName) {
+		return TypeNameHierarchy.forFullyQualifiedName(dependentName, packageInclusion);
+	}
 
+	public static class MapDependencyJudgeBuilder implements DependencyJudgeBuilder {
+
+		private PackageInclusion packageInclusion;
 		private Severity defaultSeverity;
 		private final Map<String, Map<String, Severity>> dependencies;
 		private boolean alreadyBuilt;
 
-		public HierarchicalMapDependencyJudgeBuilder() {
+		public MapDependencyJudgeBuilder() {
+			// set default values
+			packageInclusion = PackageInclusion.FLAT;
 			defaultSeverity = Severity.FAIL;
 			dependencies = new HashMap<>();
+
 			alreadyBuilt = false;
+		}
+
+		@Override
+		public DependencyJudgeBuilder withInclusion(PackageInclusion packageInclusion) {
+			this.packageInclusion =
+					requireNonNull(packageInclusion, "The argument 'packageInclusion' must not be null.");
+			return this;
 		}
 
 		@Override
@@ -81,7 +95,7 @@ public class HierarchicalMapDependencyJudge implements DependencyJudge {
 			if (alreadyBuilt)
 				throw new IllegalStateException("A builder can only be used once.");
 			alreadyBuilt = true;
-			return new HierarchicalMapDependencyJudge(defaultSeverity, dependencies);
+			return new MapDependencyJudge(packageInclusion, defaultSeverity, dependencies);
 		}
 
 	}

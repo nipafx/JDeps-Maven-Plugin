@@ -3,7 +3,8 @@ package org.codefx.maven.plugin.jdeps.mojo;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudge;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudgeBuilder;
 import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
-import org.codefx.maven.plugin.jdeps.rules.HierarchicalMapDependencyJudge.HierarchicalMapDependencyJudgeBuilder;
+import org.codefx.maven.plugin.jdeps.rules.MapDependencyJudge.MapDependencyJudgeBuilder;
+import org.codefx.maven.plugin.jdeps.rules.PackageInclusion;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.codefx.maven.plugin.jdeps.rules.SimpleDependencyJudge;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
@@ -19,11 +20,14 @@ import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
  */
 class DependencyRulesConfiguration {
 
+	private final PackageInclusion packageInclusion;
 	private final Severity defaultSeverity;
 	private final List<XmlRule> xml;
 	private final List<String> arrow;
 
-	public DependencyRulesConfiguration(Severity defaultSeverity, List<XmlRule> xml, List<String> arrow) {
+	public DependencyRulesConfiguration(
+			PackageInclusion packageInclusion, Severity defaultSeverity, List<XmlRule> xml, List<String> arrow) {
+		this.packageInclusion = requireNonNull(packageInclusion, "The argument 'packageInclusion' must not be null.");
 		this.defaultSeverity = requireNonNull(defaultSeverity, "The argument 'defaultSeverity' must not be null.");
 		this.xml = requireNonNull(xml, "The argument 'xml' must not be null.");
 		this.arrow = requireNonNull(arrow, "The argument 'arrow' must not be null.");
@@ -36,13 +40,16 @@ class DependencyRulesConfiguration {
 		if (xml.isEmpty() && arrow.isEmpty())
 			return new SimpleDependencyJudge(defaultSeverity);
 
-		DependencyJudgeBuilder dependencyJudgeBuilder =
-				new HierarchicalMapDependencyJudgeBuilder().withDefaultSeverity(defaultSeverity);
-
+		DependencyJudgeBuilder dependencyJudgeBuilder = createBuilderFromConfiguration();
 		addXmlRulesToBuilder(xml, dependencyJudgeBuilder);
 		addArrowRulesToBuilder(arrow, dependencyJudgeBuilder);
-
 		return dependencyJudgeBuilder.build();
+	}
+
+	private DependencyJudgeBuilder createBuilderFromConfiguration() {
+		return new MapDependencyJudgeBuilder()
+					.withInclusion(packageInclusion)
+					.withDefaultSeverity(defaultSeverity);
 	}
 
 	static void addXmlRulesToBuilder(List<XmlRule> xmlRules, DependencyJudgeBuilder dependencyJudgeBuilder)

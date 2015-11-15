@@ -6,7 +6,21 @@ package org.codefx.maven.plugin.jdeps.rules;
 public interface DependencyJudgeBuilder {
 
 	/**
+	 * Sets the specified package inclusion.
+	 * <p>
+	 * Default value is {@link PackageInclusion#FLAT}.
+	 *
+	 * @param packageInclusion
+	 * 		the package inclusion to set
+	 *
+	 * @return this builder
+	 */
+	DependencyJudgeBuilder withInclusion(PackageInclusion packageInclusion);
+
+	/**
 	 * Sets the specified severity as the default severity used by the created judge.
+	 * <p>
+	 * Default value is {@link Severity#WARN}.
 	 *
 	 * @param defaultSeverity
 	 * 		the default severity to set
