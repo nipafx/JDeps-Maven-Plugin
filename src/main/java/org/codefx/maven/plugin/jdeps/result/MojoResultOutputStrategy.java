@@ -25,22 +25,26 @@ import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
 public class MojoResultOutputStrategy implements ResultOutputStrategy {
 
 	private static final String MESSAGE_SUMMARIZE_DEPENDENCIES =
-			"\nJDeps reported {0} dependencies on JDK-internal APIs that are configured to be ignored.";
+			"JDeps reported {0} dependencies on JDK-internal APIs that are configured to be ignored.";
 	private static final String MESSAGE_INFORM_DEPENDENCIES =
-			"\nJDeps reported {0} dependencies on JDK-internal APIs that are configured to be logged:\n{1}";
+			"JDeps reported {0} dependencies on JDK-internal APIs that are configured to be logged:\n{1}";
 	private static final String MESSAGE_WARN_DEPENDENCIES =
-			"\nJDeps reported {0} dependencies on JDK-internal APIs that are configured to be warned about:\n{1}";
+			"JDeps reported {0} dependencies on JDK-internal APIs that are configured to be warned about:\n{1}";
 	private static final String MESSAGE_FAIL_DEPENDENCIES =
-			"\nJDeps reported {0} dependencies on JDK-internal APIs that are configured to fail the build:\n{1}";
+			"JDeps reported {0} dependencies on JDK-internal APIs that are configured to fail the build:\n{1}";
 	private static final String MESSAGE_NO_DEPENDENCIES =
-			"\nJDeps reported no dependencies on JDK-internal APIs.";
+			"JDeps reported no dependencies on JDK-internal APIs.";
 
 	@Override
 	public void output(Result result) throws MojoFailureException {
+		logger().debug("Printing analysis results...");
+
 		int violationsCount = logNumberOfViolationsToSummarize(result);
 		violationsCount += logViolationsToInform(result);
 		violationsCount += logViolationsToWarn(result);
-		violationsCount += throwExceptionForViolationsToFail(result);
+		// for better readability violations to fail are both logged and thrown as an exception
+		violationsCount += logViolationsToFail(result);
+		throwExceptionForViolationsToFail(result);
 
 		// note that the previous line might have thrown an exception in which case this is never executed
 		if (violationsCount == 0)
@@ -61,6 +65,11 @@ public class MojoResultOutputStrategy implements ResultOutputStrategy {
 	private int logViolationsToWarn(Result result) {
 		return logViolations(
 				result.violationsToWarn(), MESSAGE_WARN_DEPENDENCIES, message -> logger().warn(message));
+	}
+
+	private int logViolationsToFail(Result result) {
+		return logViolations(
+				result.violationsToFail(), MESSAGE_FAIL_DEPENDENCIES, message -> logger().error(message));
 	}
 
 	private int throwExceptionForViolationsToFail(Result result) throws MojoFailureException {

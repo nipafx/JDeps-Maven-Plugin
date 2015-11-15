@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
 import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE;
+import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
 
 /**
  * Runs "jdeps -jdkinternals" and breaks the build if the tool reports dependencies on JDK internal API.
@@ -47,8 +48,16 @@ public class JdkInternalsMojo extends AbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		MojoLogging.registerLogger(this::getLog);
+		logPluginStart();
 		executePlugin();
 		MojoLogging.unregisterLogger();
+	}
+
+	private void logPluginStart() {
+		logger().debug("Hello from JDeps-Maven-Plugin!");
+		logger().debug("Configuration:");
+		logger().debug("\tpackages = " + packages);
+		logger().debug("\tdefaultSeverity = " + defaultSeverity);
 	}
 
 	private void executePlugin() throws MojoExecutionException, MojoFailureException {

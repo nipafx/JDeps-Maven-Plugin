@@ -11,6 +11,7 @@ import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 
 import java.util.List;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
 
@@ -48,8 +49,8 @@ class DependencyRulesConfiguration {
 
 	private DependencyJudgeBuilder createBuilderFromConfiguration() {
 		return new MapDependencyJudgeBuilder()
-					.withInclusion(packageInclusion)
-					.withDefaultSeverity(defaultSeverity);
+				.withInclusion(packageInclusion)
+				.withDefaultSeverity(defaultSeverity);
 	}
 
 	static void addXmlRulesToBuilder(List<XmlRule> xmlRules, DependencyJudgeBuilder dependencyJudgeBuilder)
@@ -67,7 +68,7 @@ class DependencyRulesConfiguration {
 
 	static void addArrowRulesToBuilder(List<String> arrowRules, DependencyJudgeBuilder dependencyJudgeBuilder)
 			throws ConfigurationException {
-		logStartAddingRules(arrowRules, "arrow");
+		logStartAddingRules(arrowRules, "Arrow");
 
 		for (String arrowRule : arrowRules) {
 			ArrowRuleParser
@@ -78,23 +79,23 @@ class DependencyRulesConfiguration {
 					});
 		}
 
-		logDoneAddingRules(arrowRules, "arrow");
+		logDoneAddingRules(arrowRules, "Arrow");
 	}
 
 	private static void logStartAddingRules(List<?> rules, String ruleName) {
 		if (!rules.isEmpty())
-			logger().debug("Adding configured " + ruleName + " rules:");
+			logger().debug("\t" + ruleName + " rules:");
 	}
 
 	private static void logAddedRule(DependencyRule dependencyRule) {
-		logger().debug("\t" + dependencyRule);
+		logger().debug("\t\t" + dependencyRule);
 	}
 
 	private static void logDoneAddingRules(List<?> rules, String ruleName) {
 		if (rules.isEmpty())
-			logger().info("No " + ruleName + " rules configured.");
+			logger().debug(format("\t%s rules: none configured", ruleName));
 		else
-			logger().info(rules.size() + " " + ruleName + " rules configured and added.");
+			logger().debug(format("\ttotal: %d", rules.size()));
 	}
 
 }

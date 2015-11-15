@@ -11,11 +11,18 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.String.format;
+import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
+
 /**
- * Parses violation blocks from the JDeps output line by line and hands created {@link Violation}s to a {@link Consumer}
- * which can further process it.
+ * Parses violation blocks from the JDeps output line by line and hands created {@link Violation}s to a
+ * {@link Consumer} that can further process it.
  */
 public class ViolationParser {
+
+	public static final String MESSAGE_MARKER_JDEPS_LINE = "[d]";
+	public static final String MESSAGE_MARKER_UNKNOWN_LINE = "[ ]";
+	private static final String MESSAGE_PARSED_LINE = " %s %s";
 
 	/**
 	 * Pattern to match the reported type line, e.g.
@@ -38,7 +45,7 @@ public class ViolationParser {
 	 * Creates a new parser.
 	 *
 	 * @param violationConsumer
-	 *            the {@link Consumer} to which parsed {@link Violation}s are handed over
+	 * 		the {@link Consumer} to which parsed {@link Violation}s are handed over
 	 */
 	public ViolationParser(Consumer<Violation> violationConsumer) {
 		this(new InternalTypeLineParser(), violationConsumer);
@@ -48,9 +55,9 @@ public class ViolationParser {
 	 * Creates a new parser.
 	 *
 	 * @param internalTypeLineParser
-	 *            used to parse individual internal dependencies
+	 * 		used to parse individual internal dependencies
 	 * @param violationConsumer
-	 *            the {@link Consumer} to which parsed {@link Violation}s are handed over
+	 * 		the {@link Consumer} to which parsed {@link Violation}s are handed over
 	 */
 	public ViolationParser(InternalTypeLineParser internalTypeLineParser, Consumer<Violation> violationConsumer) {
 		Objects.requireNonNull(internalTypeLineParser, "The argument 'internalTypeLineParser' must not be null.");
@@ -66,14 +73,16 @@ public class ViolationParser {
 	/**
 	 * Parses the specified line.
 	 * <p>
-	 * As soon as a new {@link Violation} is created it is handed to the {@link Consumer} specified during construction.
+	 * As soon as a new {@link Violation} is created it is handed to the {@link Consumer} specified during
+	 * construction.
 	 *
 	 * @param line
-	 *            the line to parse
+	 * 		the line to parse
 	 */
 	public void parseLine(String line) {
 		Objects.requireNonNull(line, "The argument 'line' must not be null.");
 		lineParser = lineParser.parseLine(line);
+		lineParser.logLine(line);
 	}
 
 	/**
@@ -110,6 +119,7 @@ public class ViolationParser {
 
 		LineParserState parseLine(String line);
 
+		void logLine(String line);
 	}
 
 	/**
@@ -122,6 +132,11 @@ public class ViolationParser {
 		@Override
 		public LineParserState parseLine(String line) {
 			return determineWhetherNewBlockStarted(line);
+		}
+
+		@Override
+		public void logLine(String line) {
+			logger().debug(format(MESSAGE_PARSED_LINE, MESSAGE_MARKER_UNKNOWN_LINE, line));
 		}
 
 	}
@@ -173,6 +188,11 @@ public class ViolationParser {
 		private void finishViolation() {
 			Violation violation = violationBuilder.build();
 			violationConsumer.accept(violation);
+		}
+
+		@Override
+		public void logLine(String line) {
+			logger().debug(format(MESSAGE_PARSED_LINE, MESSAGE_MARKER_JDEPS_LINE, line));
 		}
 
 	}

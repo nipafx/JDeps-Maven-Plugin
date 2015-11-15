@@ -1,6 +1,5 @@
 package org.codefx.maven.plugin.jdeps.mojo;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.codefx.maven.plugin.jdeps.parse.ViolationParser;
 import org.codefx.maven.plugin.jdeps.result.Result;
 import org.codefx.maven.plugin.jdeps.result.ResultBuilder;
@@ -50,7 +49,7 @@ class JdkInternalsExecutionService {
 
 	private static Path findJDepsExecutable() throws CommandLineException {
 		JDepsSearch jDepsSearch = new ComposedJDepsSearch();
-		return jDepsSearch.search().orElseThrow(() -> new CommandLineException("Could not locate jdeps executable."));
+		return jDepsSearch.search().orElseThrow(() -> new CommandLineException("Could not locate JDeps executable."));
 	}
 
 	private static ResultBuilder createResultBuilder(DependencyRulesConfiguration dependencyRulesConfiguration)

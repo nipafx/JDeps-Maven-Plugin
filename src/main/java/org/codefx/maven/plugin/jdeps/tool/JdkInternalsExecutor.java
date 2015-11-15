@@ -1,5 +1,11 @@
 package org.codefx.maven.plugin.jdeps.tool;
 
+import org.codefx.maven.plugin.jdeps.parse.ViolationParser;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
+import org.codehaus.plexus.util.cli.Commandline;
+
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.nio.file.Path;
@@ -7,10 +13,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
-import org.codehaus.plexus.util.cli.Commandline;
+import static java.lang.String.format;
+import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
 
 /**
  * Executes "jdeps -jdkinternals".
@@ -65,8 +69,17 @@ public class JdkInternalsExecutor {
 	private void execute(Commandline jDepsCommand) throws CommandLineException {
 		StringStreamConsumer errorConsoleConsumer = new StringStreamConsumer();
 
+		logger().debug(format("Running JDeps: %s", jDepsCommand));
+		logger().debug(String.format(
+				"(JDeps output is forwarded here. "
+						+ "Lines are marked: %s = recognized as dependency; %s = not recognized.)",
+				ViolationParser.MESSAGE_MARKER_JDEPS_LINE,
+				ViolationParser.MESSAGE_MARKER_UNKNOWN_LINE));
+
 		int exitCode = CommandLineUtils.executeCommandLine(
 				jDepsCommand, jDepsOutputConsumer::accept, errorConsoleConsumer);
+
+		logger().debug(format("JDeps completed with exit code %d.", exitCode));
 
 		if (exitCode != 0)
 			throwCommandLineException(jDepsCommand, exitCode, errorConsoleConsumer.getOutput());
