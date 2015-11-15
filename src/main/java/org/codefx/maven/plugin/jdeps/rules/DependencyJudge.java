@@ -36,7 +36,7 @@ import org.codefx.maven.plugin.jdeps.dependency.Type;
  * <h2>Hierarchical vs. Flat</h2>
  *
  * <h3>Flat Judge</h3>
- * A flat judge adheres to the official interpretation of Java packages, which are <em>not</em> hierarchical.
+ * A {@link PackageInclusion#FLAT flat} judge adheres to the official interpretation of Java packages, which are <em>not</em> hierarchical.
  * In this case there is no relation between, e.g., the packages "com.foo" and "com.foo.bar".
  * <p>
  * Rules defined for a package will only match the contained types, including their inner types. Rules defined for
@@ -62,7 +62,7 @@ import org.codefx.maven.plugin.jdeps.dependency.Type;
  * </ul>
  *
  * <h3>Hierarchical Judge</h3>
- * A hierarchical judge will interpret package names similar to folders and thus create a relation where packages can
+ * A {@link PackageInclusion#HIERARCHICAL hierarchical} judge will interpret package names similar to folders and thus create a relation where packages can
  * contain other packages, e.g. {@code sun} contains {@code sun.misc}.
  *
  * <h4>Example</h4>

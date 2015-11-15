@@ -23,8 +23,10 @@ public class HierarchicalMapDependencyJudge implements DependencyJudge {
 
 	@Override
 	public Severity judgeSeverity(String dependentName, String dependencyName) {
-		TypeNameHierarchy dependentNameHierarchy = TypeNameHierarchy.forFullyQualifiedName(dependentName);
-		TypeNameHierarchy dependencyNameHierarchy = TypeNameHierarchy.forFullyQualifiedName(dependencyName);
+		TypeNameHierarchy dependentNameHierarchy =
+				TypeNameHierarchy.forFullyQualifiedName(dependentName, PackageInclusion.HIERARCHICAL);
+		TypeNameHierarchy dependencyNameHierarchy =
+				TypeNameHierarchy.forFullyQualifiedName(dependencyName, PackageInclusion.HIERARCHICAL);
 
 		for (String dependentNamePart : dependentNameHierarchy)
 			for (String dependencyNamePart : dependencyNameHierarchy) {
