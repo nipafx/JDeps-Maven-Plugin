@@ -12,18 +12,25 @@ public class ViolationTest {
 
 	private static final Type DEPENDENT = Type.of("com.foo.Bar");
 
-	private static final ImmutableList<InternalType> INTERNAL_DEPENDENCIES =
+	private static final ImmutableList<InternalType> DEPENDENCIES =
 			ImmutableList.of(
 					InternalType.of("sun.misc", "Unsafe", "", ""),
 					InternalType.of("sun.misc", "BASE64Decoder", "", ""),
 					InternalType.of("sun.misc", "BASE64Encoder", "", "")
 			);
 
+	private static final ImmutableList<InternalType> SORTED_DEPENDENCIES =
+			ImmutableList.of(
+					InternalType.of("sun.misc", "BASE64Decoder", "", ""),
+					InternalType.of("sun.misc", "BASE64Encoder", "", ""),
+					InternalType.of("sun.misc", "Unsafe", "", "")
+					);
+
 	// #begin BUILD FOR
 
 	@Test(expected = NullPointerException.class)
 	public void buildFor_dependentNull_throwsException() {
-		Violation.buildFor(null, INTERNAL_DEPENDENCIES);
+		Violation.buildFor(null, DEPENDENCIES);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -38,14 +45,14 @@ public class ViolationTest {
 
 	@Test
 	public void buildFor_dependent_violationReturnsDependent() throws Exception {
-		Violation violation = Violation.buildFor(DEPENDENT, INTERNAL_DEPENDENCIES);
+		Violation violation = Violation.buildFor(DEPENDENT, DEPENDENCIES);
 		assertThat(violation.getDependent()).isEqualTo(DEPENDENT);
 	}
 
 	@Test
-	public void buildFor_dependent_violationReturnsInternalDependencies() throws Exception {
-		Violation violation = Violation.buildFor(DEPENDENT, INTERNAL_DEPENDENCIES);
-		assertThat(violation.getInternalDependencies()).containsExactlyElementsOf(INTERNAL_DEPENDENCIES);
+	public void buildFor_dependencies_violationReturnsInternalDependenciesInSortedOrder() throws Exception {
+		Violation violation = Violation.buildFor(DEPENDENT, DEPENDENCIES);
+		assertThat(violation.getInternalDependencies()).containsExactlyElementsOf(SORTED_DEPENDENCIES);
 	}
 
 	// #end BUILD FOR
@@ -61,7 +68,7 @@ public class ViolationTest {
 	public void buildForDependent_buildViolation_returnsDependent() {
 		Violation violation = Violation
 				.buildForDependent(DEPENDENT)
-				.addDependencies(INTERNAL_DEPENDENCIES)
+				.addDependencies(DEPENDENCIES)
 				.build();
 		assertThat(violation.getDependent()).isEqualTo(DEPENDENT);
 	}
@@ -75,25 +82,94 @@ public class ViolationTest {
 	public void addDependency_buildViolation_returnsAddedDependency() throws Exception {
 		Violation violation = Violation
 				.buildForDependent(DEPENDENT)
-				.addDependency(INTERNAL_DEPENDENCIES.get(0))
+				.addDependency(DEPENDENCIES.get(0))
 				.build();
-		assertThat(violation.getInternalDependencies()).containsExactly(INTERNAL_DEPENDENCIES.get(0));
+		assertThat(violation.getInternalDependencies()).containsExactly(DEPENDENCIES.get(0));
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void addDependencies_dependencyNull_throwsException() {
-		Violation.buildForDependent(DEPENDENT).addDependencies(null);
+		Violation.buildForDependent(DEPENDENT).addDependencies((Iterable<InternalType>) null);
 	}
 
 	@Test
-	public void addDependencies_buildViolation_returnsAddedDependencies() throws Exception {
+	public void addDependencies_buildViolation_returnsAddedDependenciesInSortedOrder() throws Exception {
 		Violation violation = Violation
 				.buildForDependent(DEPENDENT)
-				.addDependencies(INTERNAL_DEPENDENCIES)
+				.addDependencies(DEPENDENCIES)
 				.build();
-		assertThat(violation.getInternalDependencies()).containsExactlyElementsOf(INTERNAL_DEPENDENCIES);
+		assertThat(violation.getInternalDependencies()).containsExactlyElementsOf(SORTED_DEPENDENCIES);
 	}
 
 	// #end BUILD FOR DEPENDENT
+
+	@Test
+	public void compareTo_differentDependents_orderedByDependents() throws Exception {
+		Violation smaller = Violation
+				.buildForDependent(Type.of("java.lang.Object"))
+				.addDependencies(DEPENDENCIES)
+				.build();
+		Violation greater = Violation
+				.buildForDependent(Type.of("java.lang.String"))
+				.addDependencies(DEPENDENCIES)
+				.build();
+
+		assertThat(smaller.compareTo(greater)).isNegative();
+		assertThat(greater.compareTo(smaller)).isPositive();
+	}
+
+	@Test
+	public void compareTo_sameDependents_differentDependencies_orderedByDependencies() throws Exception {
+		Violation smaller = Violation
+				.buildForDependent(DEPENDENT)
+				.addDependencies(
+						InternalType.of("sun.misc", "BASE64Decoder", "", ""),
+						InternalType.of("sun.misc", "Unsafe", "", ""))
+				.build();
+		Violation greater = Violation
+				.buildForDependent(DEPENDENT)
+				.addDependencies(
+						InternalType.of("sun.misc", "BASE64Encoder", "", ""),
+						InternalType.of("sun.misc", "Unsafe", "", ""))
+				.build();
+
+		assertThat(smaller.compareTo(greater)).isNegative();
+		assertThat(greater.compareTo(smaller)).isPositive();
+	}
+
+	@Test
+	public void compareTo_sameDependents_subsetDependencies_orderedByDependencies() throws Exception {
+		Violation smaller = Violation
+				.buildForDependent(DEPENDENT)
+				.addDependencies(
+						InternalType.of("sun.misc", "BASE64Decoder", "", ""),
+						InternalType.of("sun.misc", "BASE64Encoder", "", ""))
+				.build();
+		Violation greater = Violation
+				.buildForDependent(DEPENDENT)
+				.addDependencies(
+						InternalType.of("sun.misc", "BASE64Decoder", "", ""),
+						InternalType.of("sun.misc", "BASE64Encoder", "", ""),
+						InternalType.of("sun.misc", "Unsafe", "", ""))
+				.build();
+
+		assertThat(smaller.compareTo(greater)).isNegative();
+		assertThat(greater.compareTo(smaller)).isPositive();
+	}
+
+	@Test
+	public void compareTo_sameDependents_sameDependencies_orderedSame() throws Exception {
+		Violation one = Violation
+				.buildForDependent(DEPENDENT)
+				.addDependencies(DEPENDENCIES)
+				.build();
+		Violation other = Violation
+				.buildForDependent(DEPENDENT)
+				.addDependencies(DEPENDENCIES)
+				.build();
+
+		assertThat(one.compareTo(other)).isZero();
+		assertThat(other.compareTo(one)).isZero();
+	}
 
 }

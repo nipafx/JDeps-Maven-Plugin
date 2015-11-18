@@ -80,4 +80,32 @@ public class TypeTest {
 		assertThat(type.getFullyQualifiedName()).isEqualTo("java.lang.Class");
 	}
 
+	@Test
+	public void compareTo_differentPackageNames_orderedByPackageName() throws Exception {
+		// note how if the types were sorted by their simple name, 'Optional' would be smaller than 'String'
+		Type smaller = Type.of("java.lang", "String");
+		Type greater = Type.of("java.util", "Optional");
+
+		assertThat(smaller.compareTo(greater)).isNegative();
+		assertThat(greater.compareTo(smaller)).isPositive();
+	}
+
+	@Test
+	public void compareTo_samePackageButDifferentClassNames_orderedByClassName() throws Exception {
+		Type smaller = Type.of("java.lang", "Object");
+		Type greater = Type.of("java.lang", "String");
+
+		assertThat(smaller.compareTo(greater)).isNegative();
+		assertThat(greater.compareTo(smaller)).isPositive();
+	}
+
+	@Test
+	public void compareTo_sameFullyQualifiedName_orderedSame() throws Exception {
+		Type one = Type.of("java.lang", "Object");
+		Type other = Type.of("java.lang", "Object");
+
+		assertThat(one.compareTo(other)).isZero();
+		assertThat(other.compareTo(one)).isZero();
+	}
+
 }

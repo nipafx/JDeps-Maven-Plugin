@@ -1,9 +1,15 @@
 package org.codefx.maven.plugin.jdeps.dependency;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
+import static java.lang.Integer.min;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
@@ -12,23 +18,34 @@ import static java.util.stream.Collectors.joining;
  * <p>
  * It consists of a {@link Type} which depends on one or more {@link InternalType}s.
  */
-public class Violation {
+public final class Violation implements Comparable<Violation> {
 
 	private final Type dependent;
-	private final ImmutableList<InternalType> internalDependencies;
+	private final ImmutableList<InternalType> sortedInternalDependencies;
 
 	/**
 	 * @throws IllegalStateException
 	 * 		if the list of internal dependencies is empty
 	 */
-	private Violation(Type dependent, ImmutableList<InternalType> internalDependencies) {
+	private Violation(Type dependent, Collection<InternalType> internalDependencies) {
 		this.dependent = requireNonNull(dependent, "The argument 'dependent' must not be null.");
-		this.internalDependencies =
-				requireNonNull(internalDependencies, "The argument 'internalDependencies' must not be null.");
 
+		requireNonNull(internalDependencies, "The argument 'internalDependencies' must not be null.");
 		if (internalDependencies.size() == 0)
 			throw new IllegalArgumentException(
 					"A violation must contain at least one internal dependency.");
+		sortedInternalDependencies = sorted(internalDependencies);
+	}
+
+	private static ImmutableList<InternalType> sorted(Iterable<InternalType> dependencies) {
+		boolean dependenciesAreOrdered = Ordering.natural().isOrdered(dependencies);
+		if (dependenciesAreOrdered)
+			if (dependencies instanceof ImmutableList)
+				return (ImmutableList<InternalType>) dependencies;
+			else
+				return ImmutableList.copyOf(dependencies);
+		else
+			return Ordering.natural().immutableSortedCopy(dependencies);
 	}
 
 	/**
@@ -44,7 +61,7 @@ public class Violation {
 	 * @throws IllegalStateException
 	 * 		if the list of internal dependencies is empty
 	 */
-	public static Violation buildFor(Type dependent, ImmutableList<InternalType> internalDependencies) {
+	public static Violation buildFor(Type dependent, Collection<InternalType> internalDependencies) {
 		return new Violation(dependent, internalDependencies);
 	}
 
@@ -71,10 +88,31 @@ public class Violation {
 	 * @return the internal types upon which {@link #getDependent()} depends
 	 */
 	public ImmutableList<InternalType> getInternalDependencies() {
-		return internalDependencies;
+		return sortedInternalDependencies;
 	}
 
-	// #begin EQUALS, HASHCODE, TOSTRING
+	// #begin COMPARETO, EQUALS, HASHCODE, TOSTRING
+
+	@Override
+	public int compareTo(Violation other) {
+		if (this == other)
+			return 0;
+
+		int comparisonByDependents = dependent.compareTo(other.dependent);
+		if (comparisonByDependents != 0)
+			return comparisonByDependents;
+
+		// check the elements in both lists
+		int maxIndex = min(sortedInternalDependencies.size(), other.sortedInternalDependencies.size());
+		for (int i = 0; i < maxIndex; i++) {
+			int comparisonByDependencies =
+					sortedInternalDependencies.get(i).compareTo(other.sortedInternalDependencies.get(i));
+			if (comparisonByDependencies != 0)
+				return comparisonByDependencies;
+		}
+		// both lists contain the same elements up to the length of the shorter one; make the shorter one smaller
+		return sortedInternalDependencies.size() - other.sortedInternalDependencies.size();
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -87,17 +125,17 @@ public class Violation {
 
 		Violation other = (Violation) obj;
 		return Objects.equals(dependent, other.dependent)
-				&& Objects.equals(internalDependencies, other.internalDependencies);
+				&& Objects.equals(sortedInternalDependencies, other.sortedInternalDependencies);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(dependent, internalDependencies);
+		return Objects.hash(dependent, sortedInternalDependencies);
 	}
 
 	@Override
 	public String toString() {
-		String dependencies = internalDependencies
+		String dependencies = sortedInternalDependencies
 				.stream()
 				.map(Object::toString)
 				.collect(joining(", ", "{", "}"));
@@ -111,12 +149,12 @@ public class Violation {
 		String dependentLine = ".\t" + dependent + "\n";
 		String dependencyLineStart = ".\t\t -> ";
 		return dependentLine +
-				internalDependencies.stream()
+				sortedInternalDependencies.stream()
 						.map(Object::toString)
 						.collect(joining("\n" + dependencyLineStart, dependencyLineStart, ""));
 	}
 
-	// #end EQUALS, HASHCODE, TOSTRING
+	// #end COMPARETO, EQUALS, HASHCODE, TOSTRING
 
 	// #begin BUILDER
 
@@ -127,11 +165,11 @@ public class Violation {
 
 		private final Type dependent;
 
-		private final ImmutableList.Builder<InternalType> internalDependenciesBuilder;
+		private final List<InternalType> internalDependencies;
 
 		private ViolationBuilder(Type dependent) {
 			this.dependent = requireNonNull(dependent, "The argument 'dependent' must not be null.");
-			this.internalDependenciesBuilder = ImmutableList.builder();
+			this.internalDependencies = new ArrayList<>();
 		}
 
 		/**
@@ -145,7 +183,22 @@ public class Violation {
 		public ViolationBuilder addDependency(InternalType dependency) {
 			requireNonNull(dependency, "The argument 'dependency' must not be null.");
 
-			internalDependenciesBuilder.add(dependency);
+			internalDependencies.add(dependency);
+			return this;
+		}
+
+		/**
+		 * Adds the specified {@link InternalType}s as dependencies.
+		 *
+		 * @param dependencies
+		 * 		a variable number of internal types
+		 *
+		 * @return this builder
+		 */
+		public ViolationBuilder addDependencies(InternalType... dependencies) {
+			requireNonNull(dependencies, "The argument 'dependencies' must not be null.");
+
+			Collections.addAll(internalDependencies, dependencies);
 			return this;
 		}
 
@@ -160,7 +213,7 @@ public class Violation {
 		public ViolationBuilder addDependencies(Iterable<InternalType> dependencies) {
 			requireNonNull(dependencies, "The argument 'dependencies' must not be null.");
 
-			internalDependenciesBuilder.addAll(dependencies);
+			dependencies.forEach(internalDependencies::add);
 			return this;
 		}
 
@@ -172,7 +225,7 @@ public class Violation {
 		 */
 		public Violation build() {
 			try {
-				return new Violation(dependent, internalDependenciesBuilder.build());
+				return new Violation(dependent, internalDependencies);
 			} catch (IllegalArgumentException ex) {
 				String message = "The violation could not be built because it contains no internal dependencies. " +
 						"Maybe the violation block ended prematurely?";

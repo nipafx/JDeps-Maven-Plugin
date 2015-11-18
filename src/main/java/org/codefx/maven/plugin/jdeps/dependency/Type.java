@@ -1,5 +1,6 @@
 package org.codefx.maven.plugin.jdeps.dependency;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
@@ -7,7 +8,11 @@ import static java.util.Objects.requireNonNull;
 /**
  * A simple textual representation of a type consisting of the package and the class name.
  */
-public class Type {
+public class Type implements Comparable<Type> {
+
+	private static final Comparator<Type> COMPARATOR = Comparator
+			.comparing(Type::getPackageName)
+			.thenComparing(Type::getClassName);
 
 	private final String packageName;
 	private final String className;
@@ -90,7 +95,15 @@ public class Type {
 		return packageName + "." + className;
 	}
 
-	// #begin EQUALS / HASHCODE / TOSTRING
+	// #begin COMPARETO / EQUALS / HASHCODE / TOSTRING
+
+	@Override
+	public final int compareTo(Type other) {
+		if (this == other)
+			return 0;
+
+		return COMPARATOR.compare(this, other);
+	}
 
 	@Override
 	public final boolean equals(Object obj) {
@@ -116,6 +129,6 @@ public class Type {
 		return packageName + "." + className;
 	}
 
-	// #end EQUALS / HASHCODE / TOSTRING
+	// #end COMPARETO / EQUALS / HASHCODE / TOSTRING
 
 }
