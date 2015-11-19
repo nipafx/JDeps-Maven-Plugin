@@ -35,13 +35,13 @@ public class DependencyRulesConfigurationTest {
 	@Test
 	public void addXmlRulesToBuilder_invalidRule_ruleNotAddedToBuilder() {
 		// see 'DependencyRuleTest' for more details of how rules can be invalid
-		XmlRule invalidRule = new XmlRule(null, null, null);
+		XmlRule invalidRule = new XmlRule("", "", Severity.FAIL);
 
 		try {
 			DependencyRulesConfiguration.addXmlRulesToBuilder(singletonList(invalidRule), dependencyJudgeBuilder);
 			fail();
 		} catch (ConfigurationException ex) {
-			assertThat(ex).hasMessageContaining("The rule (null -> null: null)");
+			assertThat(ex).hasMessageContaining("The rule ( -> : FAIL)");
 		}
 
 		verifyZeroInteractions(dependencyJudgeBuilder);

@@ -5,6 +5,7 @@ import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A dependency rule {@code (Dependent -> Dependency: Severity)} defined in full XML.
@@ -26,12 +27,24 @@ public class XmlRule {
 	}
 
 	/**
-	 * Constructor for tests.
+	 * Creates a new XML rule {@code dependent -> dependency: severity}.
 	 */
 	XmlRule(String dependent, String dependency, Severity severity) {
-		this.dependent = dependent;
-		this.dependency = dependency;
-		this.severity = severity;
+		this.dependent = requireNonNull(dependent, "The argument 'dependent' must not be null.");
+		this.dependency = requireNonNull(dependency, "The argument 'dependency' must not be null.");
+		this.severity = requireNonNull(severity, "The argument 'severity' must not be null.");
+	}
+
+	/**
+	 * Creates a new XML rule from the specified dependency rule.
+	 *
+	 * @param dependencyRule
+	 * 		the rule to create an XML rule from
+	 */
+	XmlRule(DependencyRule dependencyRule) {
+		dependent = dependencyRule.getDependent();
+		dependency = dependencyRule.getDependency();
+		severity = dependencyRule.getSeverity();
 	}
 
 	/**
@@ -63,6 +76,25 @@ public class XmlRule {
 	@Override
 	public String toString() {
 		return format("(%s -> %s: %s)", dependent, dependency, severity);
+	}
+
+	/**
+	 * Creates an XML string representing this rule.
+	 *
+	 * @param linePrefix
+	 * 		the prefix to use for each line, possibly existing indentation
+	 * @param indent
+	 * 		the string used to indent inner XML, possible {@code "\t"}
+	 *
+	 * @return this rule as an XML string
+	 */
+	public String toXmlString(String linePrefix, String indent) {
+		return ""
+				+ linePrefix + "<xmlRule>\n"
+				+ linePrefix + indent + "<dependent>" + dependent + "</dependent>\n"
+				+ linePrefix + indent + "<dependency>" + dependency + "</dependency>\n"
+				+ linePrefix + indent + "<severity>" + severity + "</severity>\n"
+				+ linePrefix + "</xmlRule>\n";
 	}
 
 }
