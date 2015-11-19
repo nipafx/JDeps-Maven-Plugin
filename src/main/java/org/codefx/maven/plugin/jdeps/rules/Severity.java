@@ -1,5 +1,8 @@
 package org.codefx.maven.plugin.jdeps.rules;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 /**
  * The severity of a dependency as defined by the configuration.
  */
@@ -28,6 +31,13 @@ public enum Severity {
 	/**
 	 * Fail the build for such dependencies.
 	 */
-	FAIL
+	FAIL;
+
+	/**
+	 * @return a stream of all severities
+	 */
+	public static Stream<Severity> stream() {
+		return Arrays.stream(values());
+	}
 
 }

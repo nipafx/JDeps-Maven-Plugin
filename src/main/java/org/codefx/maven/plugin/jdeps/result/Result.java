@@ -29,7 +29,12 @@ public class Result {
 				.map(Optional::get);
 	}
 
-	// there is no way to access the violations that are congifured to be ignored because, well, they are to be ignored
+	/**
+	 * @return a stream of the violations that are configured to be be ignored
+	 */
+	public Stream<Violation> violationsToIgnore() {
+		return violationsWithSeverity(Severity.IGNORE);
+	}
 
 	/**
 	 * @return a stream of the violations that are configured to be be summarized

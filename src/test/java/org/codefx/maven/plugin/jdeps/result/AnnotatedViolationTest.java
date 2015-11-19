@@ -78,24 +78,56 @@ public class AnnotatedViolationTest {
 				.isEmpty();
 	}
 
-	private static AnnotatedViolation violationWithDependencies(AnnotatedInternalType... dependencies) {
-		return AnnotatedViolation.of(DEPENDENT, ImmutableList.copyOf(dependencies));
-	}
-
 	@Test
 	public void only_severityExists_returnsExactlyInternalDependenciesForSeverity() throws Exception {
 		assertThat(violationWithDependencies(INFORMED_ENCODER, WARNED_DECODER, FAILED_UNSAFE)
 				.only(Severity.INFORM).get()
 				.getInternalDependencies())
-				.containsExactly(ENCODER);
+				.containsOnly(ENCODER);
 		assertThat(violationWithDependencies(INFORMED_ENCODER, WARNED_DECODER, FAILED_UNSAFE)
 				.only(Severity.WARN).get()
 				.getInternalDependencies())
-				.containsExactly(DECODER);
+				.containsOnly(DECODER);
 		assertThat(violationWithDependencies(INFORMED_ENCODER, WARNED_DECODER, FAILED_UNSAFE)
 				.only(Severity.FAIL).get()
 				.getInternalDependencies())
-				.containsExactly(UNSAFE);
+				.containsOnly(UNSAFE);
+	}
+
+	@Test
+	public void except_noOtherSeverityExists_returnsEmptyOptional() throws Exception {
+		assertThat(violationWithDependencies(INFORMED_ENCODER)
+				.except(Severity.IGNORE, Severity.INFORM))
+				.isEmpty();
+		assertThat(violationWithDependencies(WARNED_DECODER)
+				.except(Severity.IGNORE, Severity.WARN))
+				.isEmpty();
+		assertThat(violationWithDependencies(FAILED_UNSAFE)
+				.except(Severity.IGNORE, Severity.FAIL))
+				.isEmpty();
+		assertThat(violationWithDependencies(INFORMED_ENCODER, WARNED_DECODER)
+				.except(Severity.IGNORE, Severity.INFORM, Severity.WARN))
+				.isEmpty();
+	}
+
+	@Test
+	public void except_otherSeveritiesExist_returnsExactlyInternalDependenciesForOtherSeverities() throws Exception {
+		assertThat(violationWithDependencies(INFORMED_ENCODER, WARNED_DECODER, FAILED_UNSAFE)
+				.except(Severity.INFORM).get()
+				.getInternalDependencies())
+				.containsOnly(DECODER, UNSAFE);
+		assertThat(violationWithDependencies(INFORMED_ENCODER, WARNED_DECODER, FAILED_UNSAFE)
+				.except(Severity.WARN).get()
+				.getInternalDependencies())
+				.containsOnly(ENCODER, UNSAFE);
+		assertThat(violationWithDependencies(INFORMED_ENCODER, WARNED_DECODER, FAILED_UNSAFE)
+				.except(Severity.FAIL).get()
+				.getInternalDependencies())
+				.containsOnly(ENCODER,  DECODER);
+	}
+
+	private static AnnotatedViolation violationWithDependencies(AnnotatedInternalType... dependencies) {
+		return AnnotatedViolation.of(DEPENDENT, ImmutableList.copyOf(dependencies));
 	}
 
 }
