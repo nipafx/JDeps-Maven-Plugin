@@ -27,7 +27,7 @@ public class JdkInternalsExecutionServiceTest {
 		Result result = JdkInternalsExecutionService.execute(
 				new File(PATH_TO_SCANNED_FOLDER),
 				new DependencyRulesConfiguration(
-						PackageInclusion.HIERARCHICAL, Severity.WARN,
+						Severity.WARN, PackageInclusion.HIERARCHICAL,
 						Collections.emptyList(), Collections.emptyList()));
 		new SystemOutResultOutputStrategy().output(result);
 	}

@@ -13,7 +13,7 @@ import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 import org.codehaus.plexus.util.cli.CommandLineException;
 
 import java.io.File;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
@@ -31,16 +31,16 @@ import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
 public class JdkInternalsMojo extends AbstractMojo {
 
 	@Parameter
-	private PackageInclusion packages = PackageInclusion.FLAT;
-
-	@Parameter
 	private Severity defaultSeverity = Severity.WARN;
 
 	@Parameter
-	private List<XmlRule> xmlDependencyRules;
+	private PackageInclusion packages = PackageInclusion.FLAT;
 
 	@Parameter
-	private List<String> arrowDependencyRules;
+	private List<XmlRule> xmlDependencyRules = new ArrayList<>();
+
+	@Parameter
+	private List<String> arrowDependencyRules = new ArrayList<>();
 
 	@Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true)
 	private File buildOutputDirectory;
@@ -69,21 +69,14 @@ public class JdkInternalsMojo extends AbstractMojo {
 		try {
 			return JdkInternalsExecutionService.execute(
 					buildOutputDirectory,
-					new DependencyRulesConfiguration(
-							packages,
-							defaultSeverity,
-							emptyListIfNull(xmlDependencyRules),
-							emptyListIfNull(arrowDependencyRules))
+					 new DependencyRulesConfiguration(
+							defaultSeverity, packages, xmlDependencyRules, arrowDependencyRules)
 			);
 		} catch (CommandLineException ex) {
 			throw new MojoExecutionException("Executing 'jdeps -jdkinternals' failed.", ex);
 		} catch (ConfigurationException ex) {
 			throw new MojoExecutionException("Parsing the configuration failed.", ex);
 		}
-	}
-
-	private static <E> List<E> emptyListIfNull(List<E> list) {
-		return list == null ? Collections.emptyList() : list;
 	}
 
 }

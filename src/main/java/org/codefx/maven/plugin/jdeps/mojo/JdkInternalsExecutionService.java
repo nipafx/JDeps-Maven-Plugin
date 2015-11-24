@@ -27,35 +27,34 @@ class JdkInternalsExecutionService {
 	 * @param dependencyRulesConfiguration
 	 * 		the configuration for the dependency rules
 	 *
-	 * @return the result of the JDeps run
-	 *
 	 * @throws CommandLineException
 	 * 		if the jdeps executable could not be found, running the tool failed or it returned with an error
 	 */
-	public static Result execute(
-			File scannedFolder, DependencyRulesConfiguration dependencyRulesConfiguration)
+	public static Result execute(File scannedFolder, DependencyRulesConfiguration dependencyRulesConfiguration)
 			throws CommandLineException, ConfigurationException {
-		Path jDepsExecutable = findJDepsExecutable();
 
 		ResultBuilder resultBuilder = createResultBuilder(dependencyRulesConfiguration);
-		ViolationParser violationParser = new ViolationParser(resultBuilder::addViolation);
-		JdkInternalsExecutor executor = new JdkInternalsExecutor(
-				jDepsExecutable, Paths.get(scannedFolder.toURI()), violationParser::parseLine);
-
-		executor.execute();
-
+		createJdkInternalsExecutor(scannedFolder, resultBuilder).execute();
 		return resultBuilder.build();
-	}
-
-	private static Path findJDepsExecutable() throws CommandLineException {
-		JDepsSearch jDepsSearch = new ComposedJDepsSearch();
-		return jDepsSearch.search().orElseThrow(() -> new CommandLineException("Could not locate JDeps executable."));
 	}
 
 	private static ResultBuilder createResultBuilder(DependencyRulesConfiguration dependencyRulesConfiguration)
 			throws ConfigurationException {
 		DependencyJudge dependencyJudge = dependencyRulesConfiguration.createJudge();
 		return new ResultBuilder(dependencyJudge);
+	}
+
+	private static JdkInternalsExecutor createJdkInternalsExecutor(File scannedFolder, ResultBuilder resultBuilder)
+			throws CommandLineException {
+		Path jDepsExecutable = findJDepsExecutable();
+		Path folderToScan = Paths.get(scannedFolder.toURI());
+		ViolationParser violationParser = new ViolationParser(resultBuilder::addViolation);
+		return new JdkInternalsExecutor(jDepsExecutable, folderToScan, violationParser::parseLine);
+	}
+
+	private static Path findJDepsExecutable() throws CommandLineException {
+		JDepsSearch jDepsSearch = new ComposedJDepsSearch();
+		return jDepsSearch.search().orElseThrow(() -> new CommandLineException("Could not locate JDeps executable."));
 	}
 
 }
