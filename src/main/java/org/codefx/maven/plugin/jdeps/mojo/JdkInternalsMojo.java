@@ -5,8 +5,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.codefx.maven.plugin.jdeps.result.MojoOutputStrategy;
 import org.codefx.maven.plugin.jdeps.result.Result;
+import org.codefx.maven.plugin.jdeps.result.ResultOutputStrategy;
 import org.codefx.maven.plugin.jdeps.rules.PackageInclusion;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
@@ -45,6 +45,15 @@ public class JdkInternalsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.outputDirectory}", readonly = true)
 	private File buildOutputDirectory;
 
+	@Parameter
+	private boolean outputRulesForViolations = false;
+
+	@Parameter
+	private RuleOutputFormat outputFormat = RuleOutputFormat.XML;
+
+	@Parameter(defaultValue = "${project.build.outputDirectory}")
+	private String outputPath = "";
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		MojoLogging.registerLogger(this::getLog);
@@ -62,7 +71,14 @@ public class JdkInternalsMojo extends AbstractMojo {
 
 	private void executePlugin() throws MojoExecutionException, MojoFailureException {
 		Result result = executeJDeps();
-		new MojoResultOutputStrategy().output(result);
+		outputResult(result);
+	}
+
+	private void outputResult(Result result) throws MojoFailureException {
+		ResultOutputStrategy outputStrategy = new OutputConfiguration(
+				outputRulesForViolations, outputFormat, outputPath)
+				.createOutputStrategy();
+		outputStrategy.output(result);
 	}
 
 	private Result executeJDeps() throws MojoExecutionException {
