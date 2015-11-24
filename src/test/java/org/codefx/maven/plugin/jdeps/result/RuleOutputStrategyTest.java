@@ -1,4 +1,4 @@
-package org.codefx.maven.plugin.jdeps.mojo;
+package org.codefx.maven.plugin.jdeps.result;
 
 import org.apache.maven.plugin.MojoFailureException;
 import org.codefx.maven.plugin.jdeps.dependency.InternalType;
@@ -6,6 +6,7 @@ import org.codefx.maven.plugin.jdeps.dependency.Type;
 import org.codefx.maven.plugin.jdeps.dependency.Violation;
 import org.codefx.maven.plugin.jdeps.dependency.Violation.ViolationBuilder;
 import org.codefx.maven.plugin.jdeps.result.Result;
+import org.codefx.maven.plugin.jdeps.result.RuleOutputStrategy;
 import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.junit.Before;

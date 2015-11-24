@@ -13,7 +13,7 @@ import static java.util.Objects.requireNonNull;
  * This class is only used as a vehicle for the Mojo's configuration parameters. Note that it requires a parameterless
  * constructor and that changing its name or the name of its fields would break existing configurations.
  */
-public class XmlRule {
+class XmlRule {
 
 	private String dependent;
 	private String dependency;

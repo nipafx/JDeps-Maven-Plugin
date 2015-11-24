@@ -1,4 +1,4 @@
-package org.codefx.maven.plugin.jdeps.mojo;
+package org.codefx.maven.plugin.jdeps.result;
 
 import org.apache.maven.plugin.MojoFailureException;
 import org.codefx.maven.plugin.jdeps.dependency.Violation;

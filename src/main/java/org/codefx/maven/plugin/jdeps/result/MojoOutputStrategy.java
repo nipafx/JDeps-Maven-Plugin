@@ -22,7 +22,7 @@ import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
 /**
  * A {@link ResultOutputStrategy} that uses the Mojos facilities to report violations, i.e. the logger and exceptions.
  */
-public class MojoResultOutputStrategy implements ResultOutputStrategy {
+public class MojoOutputStrategy implements ResultOutputStrategy {
 
 	private static final String MESSAGE_SUMMARIZE_DEPENDENCIES =
 			"JDeps reported {0} dependencies on JDK-internal APIs that are configured to be ignored.";

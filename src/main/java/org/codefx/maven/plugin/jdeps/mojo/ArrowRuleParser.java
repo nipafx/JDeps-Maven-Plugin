@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.joining;
  * Parses rules of the form
  * {@code com.foo.Bar -> sun.misc.Unsafe: WARN} and {@code com.fo.Bar on sun.misc.Unsafe: WARN}.
  */
-public class ArrowRuleParser {
+class ArrowRuleParser {
 
 	private static final String ERROR_MESSAGE_LINE_INVALID_RULE = "The line '%s' defines no valid rule.";
 	private static final String ERROR_MESSAGE_MULTIPLE_RULES =

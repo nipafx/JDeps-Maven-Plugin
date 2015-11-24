@@ -7,7 +7,7 @@ import static java.util.stream.Collectors.joining;
 /**
  * The different visualisations of an arrow in arrow rules like {@code dependent -> dependency: severity}.
  */
-public enum Arrow {
+enum Arrow {
 
 	ARROW("->"),
 	ON("on");
