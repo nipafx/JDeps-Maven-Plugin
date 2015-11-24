@@ -22,7 +22,13 @@ public class Result {
 		this.violations = requireNonNull(violations, "The argument 'violations' must not be null.");
 	}
 
-	private Stream<Violation> violationsWithSeverity(Severity severity) {
+	/**
+	 * @param severity
+	 * 		the severity to filter by
+	 *
+	 * @return a stream of violations with the specified severity
+	 */
+	public Stream<Violation> violationsWithSeverity(Severity severity) {
 		return violations.stream()
 				.map(violation -> violation.only(severity))
 				.filter(Optional::isPresent)
