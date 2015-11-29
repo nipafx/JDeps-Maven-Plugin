@@ -1,23 +1,17 @@
 package org.codefx.maven.plugin.jdeps.result;
 
 import org.apache.maven.plugin.MojoFailureException;
-import org.codefx.maven.plugin.jdeps.dependency.InternalType;
-import org.codefx.maven.plugin.jdeps.dependency.Type;
-import org.codefx.maven.plugin.jdeps.dependency.Violation;
-import org.codefx.maven.plugin.jdeps.dependency.Violation.ViolationBuilder;
-import org.codefx.maven.plugin.jdeps.result.Result;
-import org.codefx.maven.plugin.jdeps.result.RuleOutputStrategy;
 import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.codefx.maven.plugin.jdeps.Factory.violation;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -117,26 +111,6 @@ public class RuleOutputStrategyTest {
 				DependencyRule.of("org.B", "sun.Y", Severity.IGNORE),
 				DependencyRule.of("org.C", "sun.X", Severity.IGNORE)
 		);
-	}
-
-	/**
-	 * @param violation
-	 * 		a variable number of strings, which will be parsed as
-	 * 		{@code [dependentName, dependencyName, dependencyName, ... ]}
-	 *
-	 * @return a violation
-	 */
-	private static Violation violation(String... violation) {
-		ViolationBuilder violationBuilder = Violation.buildForDependent(Type.of(violation[0]));
-		Arrays.stream(violation)
-				// the first element is the dependent, which was already used above
-				.skip(1)
-				// 'InternalType.of' requires the fully qualified name to be split into package and class name;
-				// to not write such code here, create a 'Type' from the fully qualified name, first
-				.map(Type::of)
-				.map(type -> InternalType.of(type.getPackageName(), type.getClassName(), "", ""))
-				.forEachOrdered(violationBuilder::addDependency);
-		return violationBuilder.build();
 	}
 
 }
