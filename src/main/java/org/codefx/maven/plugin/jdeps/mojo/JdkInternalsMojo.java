@@ -13,6 +13,7 @@ import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 import org.codehaus.plexus.util.cli.CommandLineException;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class JdkInternalsMojo extends AbstractMojo {
 	private Result executeJDeps() throws MojoExecutionException {
 		try {
 			return JdkInternalsExecutionService.execute(
-					buildOutputDirectory,
+					Paths.get(buildOutputDirectory.toURI()),
 					new DependencyRulesConfiguration(
 							defaultSeverity, packages, xmlDependencyRules, arrowDependencyRules)
 			);

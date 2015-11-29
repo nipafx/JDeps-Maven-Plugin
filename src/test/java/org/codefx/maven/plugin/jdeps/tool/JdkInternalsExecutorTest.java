@@ -3,6 +3,7 @@ package org.codefx.maven.plugin.jdeps.tool;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -15,15 +16,15 @@ import java.nio.file.Paths;
 @SuppressWarnings("javadoc")
 public class JdkInternalsExecutorTest {
 
-	private static final String PATH_TO_JDEPS = "/opt/java/jdk8/bin/jdeps";
-	private static final String PATH_TO_SCANNED_FOLDER = "/home/nipa/Code/MavenLab/target";
+	private static final Path PATH_TO_JDEPS = Paths.get("/opt/java/jdk8/bin/jdeps");
+	private static final Path PATH_TO_SCANNED_FOLDER = Paths.get("/home/nipa/Code/MavenLab/target");
 
 	@Test
 	public void execute_pathsExist_printsJDepsOutput() throws Exception {
 		System.out.println("\n# " + getClass().getSimpleName().toUpperCase());
 
 		JdkInternalsExecutor executor = new JdkInternalsExecutor(
-				Paths.get(PATH_TO_JDEPS), Paths.get(PATH_TO_SCANNED_FOLDER), System.out::println);
+				PATH_TO_JDEPS, PATH_TO_SCANNED_FOLDER, System.out::println);
 		executor.execute();
 	}
 

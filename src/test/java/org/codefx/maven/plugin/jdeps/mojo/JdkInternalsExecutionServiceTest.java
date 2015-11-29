@@ -7,7 +7,7 @@ import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.Collections;
 
 /**
@@ -25,7 +25,7 @@ public class JdkInternalsExecutionServiceTest {
 	@Test
 	public void execute_pathsExist_returnsViolations() throws Exception {
 		Result result = JdkInternalsExecutionService.execute(
-				new File(PATH_TO_SCANNED_FOLDER),
+				Paths.get(PATH_TO_SCANNED_FOLDER),
 				new DependencyRulesConfiguration(
 						Severity.WARN, PackageInclusion.HIERARCHICAL,
 						Collections.emptyList(), Collections.emptyList()));
