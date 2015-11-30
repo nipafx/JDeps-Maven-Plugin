@@ -4,6 +4,8 @@ import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 
+import java.util.stream.Stream;
+
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
@@ -88,13 +90,20 @@ class XmlRule {
 	 *
 	 * @return this rule as an XML string
 	 */
-	public String toXmlString(String linePrefix, String indent) {
-		return ""
-				+ linePrefix + "<xmlRule>\n"
-				+ linePrefix + indent + "<dependent>" + dependent + "</dependent>\n"
-				+ linePrefix + indent + "<dependency>" + dependency + "</dependency>\n"
-				+ linePrefix + indent + "<severity>" + severity + "</severity>\n"
-				+ linePrefix + "</xmlRule>\n";
+	public Stream<String> toXmlLines(String linePrefix, String indent) {
+		requireNonNull(linePrefix, "The argument 'linePrefix' must not be null.");
+		if (!linePrefix.trim().isEmpty())
+			throw new IllegalArgumentException("The argument 'linePrefix' must only consist of whitespace.");
+		requireNonNull(indent, "The argument 'indent' must not be null.");
+		if (!indent.trim().isEmpty())
+			throw new IllegalArgumentException("The argument 'indent' must only consist of whitespace.");
+
+		return Stream.of(
+				linePrefix + "<xmlRule>",
+				linePrefix + indent + "<dependent>" + dependent + "</dependent>",
+				linePrefix + indent + "<dependency>" + dependency + "</dependency>",
+				linePrefix + indent + "<severity>" + severity + "</severity>",
+				linePrefix + "</xmlRule>");
 	}
 
 }
