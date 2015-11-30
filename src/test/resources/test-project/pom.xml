@@ -41,10 +41,13 @@
 								</xmlRule>
 							</xmlDependencyRules>
 							<arrowDependencyRules>
-								<arrowRule>
+								<arrowRules>
 									org.codefx.maven.plugin.testproject -> sun.misc.Unsafe: FAIL
-								</arrowRule>
+								</arrowRules>
 							</arrowDependencyRules>
+							<outputRulesForViolations>true</outputRulesForViolations>
+							<outputRuleFormat>ON</outputRuleFormat>
+							<outputFilePath>/home/nipa/Code/JDeps-Maven-Plugin/src/test/resources/test-project/rules.xml</outputFilePath>
 						</configuration>
 						<goals>
 							<goal>jdkinternals</goal>

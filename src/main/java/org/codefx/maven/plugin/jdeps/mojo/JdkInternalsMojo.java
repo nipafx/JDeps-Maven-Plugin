@@ -50,10 +50,10 @@ public class JdkInternalsMojo extends AbstractMojo {
 	private boolean outputRulesForViolations = false;
 
 	@Parameter
-	private RuleOutputFormat outputFormat = RuleOutputFormat.XML;
+	private RuleOutputFormat outputRuleFormat = RuleOutputFormat.XML;
 
 	@Parameter(defaultValue = "${project.build.outputDirectory}")
-	private String outputPath = "";
+	private String outputFilePath = "";
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
@@ -70,8 +70,8 @@ public class JdkInternalsMojo extends AbstractMojo {
 		logger().debug("\tpackages = " + packages);
 		logger().debug("\toutputRulesForViolations = " + outputRulesForViolations);
 		if (outputRulesForViolations) {
-			logger().debug("\toutputFormat = " + outputFormat);
-			logger().debug("\toutputPath = " + outputPath);
+			logger().debug("\toutputRuleFormat = " + outputRuleFormat);
+			logger().debug("\toutputFilePath = " + outputFilePath);
 		}
 	}
 
@@ -82,7 +82,7 @@ public class JdkInternalsMojo extends AbstractMojo {
 
 	private void outputResult(Result result) throws MojoFailureException {
 		ResultOutputStrategy outputStrategy = new OutputConfiguration(
-				outputRulesForViolations, outputFormat, outputPath)
+				outputRulesForViolations, outputRuleFormat, outputFilePath)
 				.createOutputStrategy();
 		outputStrategy.output(result);
 	}
