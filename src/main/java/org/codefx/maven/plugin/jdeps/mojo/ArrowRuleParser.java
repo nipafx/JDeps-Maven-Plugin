@@ -8,11 +8,9 @@ import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.joining;
 
 /**
  * Parses rules of the form
@@ -93,34 +91,27 @@ class ArrowRuleParser {
 	}
 
 	/**
-	 * Formats the specified dependency rules as arrow strings that can later be parsed by this parser.
+	 * Formats the specified dependency rule as an arrow string that can later be parsed by this parser.
 	 *
 	 * @param linePrefix
-	 * 		the prefix to use for every line; must only consist of whitespace
+	 * 		the prefix to use for the line; must only consist of whitespace
 	 * @param arrow
 	 * 		the arrow text to use
-	 * @param dependencyRules
-	 * 		the rules to convert to string
+	 * @param rule
+	 * 		the rule to convert to string
 	 *
-	 * @return a multiline arrow rule string
+	 * @return an arrow rule string
 	 */
-	public static String rulesToArrowStrings(
-			String linePrefix, Arrow arrow, Stream<DependencyRule> dependencyRules) {
+	public static String ruleToArrowString(String linePrefix, Arrow arrow, DependencyRule rule) {
 		requireNonNull(linePrefix, "The argument 'linePrefix' must not be null.");
 		if (!linePrefix.trim().isEmpty())
 			throw new IllegalArgumentException("The argument 'linePrefix' must only consist of whitespace.");
 		requireNonNull(arrow, "The argument 'arrow' must not be null.");
-		requireNonNull(dependencyRules, "The argument 'dependencyRules' must not be null.");
+		requireNonNull(rule, "The argument 'rule' must not be null.");
 
-		return dependencyRules
-				.map(rule -> ruleToArrowString(linePrefix, arrow, rule))
-				.collect(joining("\n"));
-	}
-
-	private static String ruleToArrowString(
-			String linePrefix, Arrow arrow, DependencyRule rule) {
-		return linePrefix + format(
+		String ruleAsString = format(
 				ARROW_RULE_FORMAT, rule.getDependent(), arrow.text(), rule.getDependency(), rule.getSeverity());
+		return linePrefix + ruleAsString;
 	}
 
 }

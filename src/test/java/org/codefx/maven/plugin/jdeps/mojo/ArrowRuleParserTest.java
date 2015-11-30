@@ -12,6 +12,7 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.codefx.maven.plugin.jdeps.mojo.ArrowRuleParser.parseRules;
+import static org.codefx.maven.plugin.jdeps.mojo.ArrowRuleParser.ruleToArrowString;
 
 /**
  * Tests {@link ArrowRuleParser}.
@@ -141,7 +142,60 @@ public class ArrowRuleParserTest {
 
 	// #begin TO STRING
 
-	// TODO: tests for 'rulesToArrowStrings'
+	@Test(expected = NullPointerException.class)
+	public void ruleToArrowString_linePrefixNull_throwsException() {
+		DependencyRule rule = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
+		ruleToArrowString(null, Arrow.ARROW, rule);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void ruleToArrowString_linePrefixNotEmpty_throwsException() {
+		DependencyRule rule = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
+		ruleToArrowString("x", Arrow.ARROW, rule);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void ruleToArrowString_arrowNull_throwsException() {
+		DependencyRule rule = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
+		ruleToArrowString("", null, rule);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void ruleToArrowString_ruleNull_throwsException() {
+		ruleToArrowString("", Arrow.ARROW, null);
+	}
+
+	@Test
+	public void ruleToArrowString_validLinePrefix_linePrefixUsed() throws Exception {
+		DependencyRule rule = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
+		String line = ruleToArrowString("\t", Arrow.ARROW, rule);
+
+		assertThat(line).startsWith("\t");
+	}
+
+	@Test
+	public void ruleToArrowString_validArrow_arrowUsed() throws Exception {
+		DependencyRule rule = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
+
+		// " -> "
+		String line = ruleToArrowString("", Arrow.ARROW, rule);
+		assertThat(line).contains(" " + Arrow.ARROW.text() + " ");
+
+		// " on "
+		line = ruleToArrowString("", Arrow.ON, rule);
+		assertThat(line).contains(" " + Arrow.ON.text() + " ");
+	}
+
+	@Test
+	public void ruleToArrowString_validRule_resultingStringIsParsable() throws Exception {
+		DependencyRule ruleIn = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
+
+		String line = ruleToArrowString("", Arrow.ARROW, ruleIn);
+		ImmutableList<DependencyRule> rulesOut = parseRules(line);
+
+		assertThat(rulesOut).hasSize(1);
+		assertThat(rulesOut.get(0)).isEqualTo(ruleIn);
+	}
 
 	// #end TO STRING
 
