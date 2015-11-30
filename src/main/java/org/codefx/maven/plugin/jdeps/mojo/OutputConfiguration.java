@@ -1,8 +1,15 @@
 package org.codefx.maven.plugin.jdeps.mojo;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.codefx.maven.plugin.jdeps.result.MojoOutputStrategy;
 import org.codefx.maven.plugin.jdeps.result.ResultOutputStrategy;
+import org.codefx.maven.plugin.jdeps.result.RuleOutputStrategy;
+import org.codefx.maven.plugin.jdeps.result.RuleWriter;
+import org.codefx.maven.plugin.jdeps.result.ViolationsToRuleTransformer;
+import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
+
+import java.nio.file.Paths;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
@@ -24,14 +31,16 @@ class OutputConfiguration {
 		if (outputRulesForViolations)
 			return createRuleOutputStrategy();
 		else
-			return createMojoOutputstrategy();
+			return createMojoOutputStrategy();
 	}
 
 	private ResultOutputStrategy createRuleOutputStrategy() {
-		throw new NotImplementedException("Not yet implemented!");
+		Function<DependencyRule, Stream<String>> toLinesTransformer = outputFormat.getToLinesTransformer("", "\t");
+		RuleWriter writer = new RuleWriter(Paths.get(outputPath));
+		return new RuleOutputStrategy(ViolationsToRuleTransformer::transform, toLinesTransformer, writer::write);
 	}
 
-	private ResultOutputStrategy createMojoOutputstrategy() {
+	private ResultOutputStrategy createMojoOutputStrategy() {
 		return new MojoOutputStrategy();
 	}
 

@@ -66,8 +66,13 @@ public class JdkInternalsMojo extends AbstractMojo {
 	private void logPluginStart() {
 		logger().debug("Hello from JDeps-Maven-Plugin!");
 		logger().debug("Configuration:");
-		logger().debug("\tpackages = " + packages);
 		logger().debug("\tdefaultSeverity = " + defaultSeverity);
+		logger().debug("\tpackages = " + packages);
+		logger().debug("\toutputRulesForViolations = " + outputRulesForViolations);
+		if (outputRulesForViolations) {
+			logger().debug("\toutputFormat = " + outputFormat);
+			logger().debug("\toutputPath = " + outputPath);
+		}
 	}
 
 	private void executePlugin() throws MojoExecutionException, MojoFailureException {
