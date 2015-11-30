@@ -143,34 +143,14 @@ public class ArrowRuleParserTest {
 	// #begin TO STRING
 
 	@Test(expected = NullPointerException.class)
-	public void ruleToArrowString_linePrefixNull_throwsException() {
-		DependencyRule rule = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
-		ruleToArrowString(null, Arrow.ARROW, rule);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void ruleToArrowString_linePrefixNotEmpty_throwsException() {
-		DependencyRule rule = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
-		ruleToArrowString("x", Arrow.ARROW, rule);
-	}
-
-	@Test(expected = NullPointerException.class)
 	public void ruleToArrowString_arrowNull_throwsException() {
 		DependencyRule rule = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
-		ruleToArrowString("", null, rule);
+		ruleToArrowString(null, rule);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void ruleToArrowString_ruleNull_throwsException() {
-		ruleToArrowString("", Arrow.ARROW, null);
-	}
-
-	@Test
-	public void ruleToArrowString_validLinePrefix_linePrefixUsed() throws Exception {
-		DependencyRule rule = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
-		String line = ruleToArrowString("\t", Arrow.ARROW, rule);
-
-		assertThat(line).startsWith("\t");
+		ruleToArrowString(Arrow.ARROW, null);
 	}
 
 	@Test
@@ -178,11 +158,11 @@ public class ArrowRuleParserTest {
 		DependencyRule rule = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
 
 		// " -> "
-		String line = ruleToArrowString("", Arrow.ARROW, rule);
+		String line = ruleToArrowString(Arrow.ARROW, rule);
 		assertThat(line).contains(" " + Arrow.ARROW.text() + " ");
 
 		// " on "
-		line = ruleToArrowString("", Arrow.ON, rule);
+		line = ruleToArrowString(Arrow.ON, rule);
 		assertThat(line).contains(" " + Arrow.ON.text() + " ");
 	}
 
@@ -190,7 +170,7 @@ public class ArrowRuleParserTest {
 	public void ruleToArrowString_validRule_resultingStringIsParsable() throws Exception {
 		DependencyRule ruleIn = DependencyRule.of("com.foo.Bar", "sun.misc.Unsafe", Severity.FAIL);
 
-		String line = ruleToArrowString("", Arrow.ARROW, ruleIn);
+		String line = ruleToArrowString(Arrow.ARROW, ruleIn);
 		ImmutableList<DependencyRule> rulesOut = parseRules(line);
 
 		assertThat(rulesOut).hasSize(1);

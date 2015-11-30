@@ -12,10 +12,11 @@ import static java.util.Objects.requireNonNull;
 /**
  * A dependency rule {@code (Dependent -> Dependency: Severity)} defined in full XML.
  * <p>
- * This class is only used as a vehicle for the Mojo's configuration parameters. Note that it requires a parameterless
- * constructor and that changing its name or the name of its fields would break existing configurations.
+ * This class is mainly used as a vehicle for the Mojo's configuration parameters. Note that it must be {@code public},
+ * requires a parameterless constructor and that changing its name or the name of its fields would break existing
+ * configurations.
  */
-class XmlRule {
+public class XmlRule {
 
 	private String dependent;
 	private String dependency;
@@ -83,27 +84,22 @@ class XmlRule {
 	/**
 	 * Creates an XML string representing this rule.
 	 *
-	 * @param linePrefix
-	 * 		the prefix to use for each line, possibly existing indentation
 	 * @param indent
 	 * 		the string used to indent inner XML, possible {@code "\t"}
 	 *
 	 * @return this rule as an XML string
 	 */
-	public Stream<String> toXmlLines(String linePrefix, String indent) {
-		requireNonNull(linePrefix, "The argument 'linePrefix' must not be null.");
-		if (!linePrefix.trim().isEmpty())
-			throw new IllegalArgumentException("The argument 'linePrefix' must only consist of whitespace.");
+	public Stream<String> toXmlLines(String indent) {
 		requireNonNull(indent, "The argument 'indent' must not be null.");
 		if (!indent.trim().isEmpty())
 			throw new IllegalArgumentException("The argument 'indent' must only consist of whitespace.");
 
 		return Stream.of(
-				linePrefix + "<xmlRule>",
-				linePrefix + indent + "<dependent>" + dependent + "</dependent>",
-				linePrefix + indent + "<dependency>" + dependency + "</dependency>",
-				linePrefix + indent + "<severity>" + severity + "</severity>",
-				linePrefix + "</xmlRule>");
+				"<xmlRule>",
+				indent + "<dependent>" + dependent + "</dependent>",
+				indent + "<dependency>" + dependency + "</dependency>",
+				indent + "<severity>" + severity + "</severity>",
+				"</xmlRule>");
 	}
 
 }

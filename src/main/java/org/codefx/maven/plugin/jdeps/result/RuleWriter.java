@@ -1,5 +1,7 @@
 package org.codefx.maven.plugin.jdeps.result;
 
+import org.codefx.maven.plugin.jdeps.mojo.RuleOutputFormat.StaticContent;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,15 +19,26 @@ import static java.util.Objects.requireNonNull;
  */
 public class RuleWriter {
 
-	private final Path outputFile;
+	private static final String DEFAULT_OUTPUT_FILE_NAME = "dependency_rules.xml";
 
-	public RuleWriter(Path outputFile) {
-		this.outputFile = requireNonNull(outputFile, "The argument 'outputFile' must not be null.");
+	private final Path outputFile;
+	private final StaticContent staticContent;
+
+	public RuleWriter(Path outputFile, StaticContent staticContent) {
+		requireNonNull(outputFile, "The argument 'outputFile' must not be null.");
+		if (Files.isDirectory(outputFile))
+			this.outputFile = outputFile.resolve(DEFAULT_OUTPUT_FILE_NAME);
+		else
+			this.outputFile = outputFile;
+
+		this.staticContent = requireNonNull(staticContent, "The argument 'staticContent' must not be null.");
 	}
 
 	public void write(Stream<String> lines) throws IOException {
 		try (BufferedWriter writer = openFile()) {
-			lines.forEachOrdered(line -> writeToFile(writer, line));
+			staticContent.fileProlog.forEach(line -> writeToFile(writer, line));
+			lines.forEachOrdered(line -> writeToFile(writer, staticContent.ruleIndent + line));
+			staticContent.fileEpilog.forEach(line -> writeToFile(writer, line));
 		} catch (IllegalStateException ex) {
 			// 'IOException's are rethrown as 'IllegalStateExceptions'
 			if (ex.getCause() instanceof IOException)
@@ -40,7 +53,7 @@ public class RuleWriter {
 		return Files.newBufferedWriter(outputFile, CREATE, APPEND, WRITE);
 	}
 
-	private static void writeToFile(BufferedWriter writer, String line) {
+	private void writeToFile(BufferedWriter writer, String line) {
 		try {
 			writer.append(line);
 			writer.newLine();

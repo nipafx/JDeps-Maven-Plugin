@@ -93,8 +93,6 @@ class ArrowRuleParser {
 	/**
 	 * Formats the specified dependency rule as an arrow string that can later be parsed by this parser.
 	 *
-	 * @param linePrefix
-	 * 		the prefix to use for the line; must only consist of whitespace
 	 * @param arrow
 	 * 		the arrow text to use
 	 * @param rule
@@ -102,16 +100,11 @@ class ArrowRuleParser {
 	 *
 	 * @return an arrow rule string
 	 */
-	public static String ruleToArrowString(String linePrefix, Arrow arrow, DependencyRule rule) {
-		requireNonNull(linePrefix, "The argument 'linePrefix' must not be null.");
-		if (!linePrefix.trim().isEmpty())
-			throw new IllegalArgumentException("The argument 'linePrefix' must only consist of whitespace.");
+	public static String ruleToArrowString(Arrow arrow, DependencyRule rule) {
 		requireNonNull(arrow, "The argument 'arrow' must not be null.");
 		requireNonNull(rule, "The argument 'rule' must not be null.");
 
-		String ruleAsString = format(
-				ARROW_RULE_FORMAT, rule.getDependent(), arrow.text(), rule.getDependency(), rule.getSeverity());
-		return linePrefix + ruleAsString;
+		return format(ARROW_RULE_FORMAT, rule.getDependent(), arrow.text(), rule.getDependency(), rule.getSeverity());
 	}
 
 }

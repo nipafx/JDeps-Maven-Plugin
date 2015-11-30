@@ -14,37 +14,18 @@ public class XmlRuleTest {
 	private XmlRule rule = new XmlRule("dependent", "depenendency", Severity.FAIL);
 
 	@Test(expected = NullPointerException.class)
-	public void toXmlLines_linePrefixNull_throwsException() {
-		rule.toXmlLines(null, "");
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void toXmlLines_linePrefixNotEmpty_throwsException() {
-		rule.toXmlLines("x", "");
-	}
-
-	@Test(expected = NullPointerException.class)
 	public void toXmlLines_indentNull_throwsException() {
-		rule.toXmlLines("", null);
+		rule.toXmlLines(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void toXmlLines_indentNotEmpty_throwsException() {
-		rule.toXmlLines("", "x");
-	}
-
-	@Test
-	public void toXmlLines_validLinePrefix_linePrefixIsUsed() throws Exception {
-		List<String> lines = rule.toXmlLines("\t", "").collect(toList());
-
-		Condition<String> startingWithLinePrefix =
-				new Condition<>(line -> line.startsWith("\t"), "Start with line prefix.");
-		assertThat(lines).are(startingWithLinePrefix);
+		rule.toXmlLines("x");
 	}
 
 	@Test
 	public void toXmlLines_validIndent_indentIsUsed() throws Exception {
-		List<String> lines = rule.toXmlLines("", "\t").collect(toList());
+		List<String> lines = rule.toXmlLines("\t").collect(toList());
 
 		Condition<String> startingWithIndentUnlessOuterTagLines = new Condition<>(
 				line -> line.startsWith("\t") || line.equals("<xmlRule>") || line.equals("</xmlRule>"),
@@ -55,7 +36,7 @@ public class XmlRuleTest {
 	@Test
 	public void toXmlLines_validRule_containsAllInformation() throws Exception {
 		XmlRule rule = new XmlRule("DEPENDENT", "DEPENDENCY", Severity.FAIL);
-		List<String> lines = rule.toXmlLines("", "").collect(toList());
+		List<String> lines = rule.toXmlLines("").collect(toList());
 
 		assertThat(lines).containsExactly(
 				"<xmlRule>",
