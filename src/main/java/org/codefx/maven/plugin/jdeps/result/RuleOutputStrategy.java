@@ -1,60 +1,73 @@
 package org.codefx.maven.plugin.jdeps.result;
 
 import org.apache.maven.plugin.MojoFailureException;
-import org.codefx.maven.plugin.jdeps.dependency.Violation;
-import org.codefx.maven.plugin.jdeps.result.Result;
-import org.codefx.maven.plugin.jdeps.result.ResultOutputStrategy;
 import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
-import org.codefx.maven.plugin.jdeps.rules.Severity;
 
-import java.util.function.Consumer;
+import java.io.IOException;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Converts a {@link Result}'s {@link Violation}s into {@link DependencyRule}s and passes them into the consumer
- * specified during construction.
+ * Interprets a result's violations as dependency rules and writes them to a file.
  */
 public class RuleOutputStrategy implements ResultOutputStrategy {
 
-	private final Consumer<DependencyRule> ruleOutput;
+	private final Function<Result, Stream<DependencyRule>> toRuleTransformer;
+	private final Function<DependencyRule, Stream<String>> toLinesTransformer;
+	private final Writer writer;
 
 	/**
-	 * Creates a new rule output using the specified consumer as a sink for the generated rules.
+	 * Creates a new output strategy, relying on the specified functions to do most of the work.
 	 *
-	 * @param ruleOutput
-	 * 		the output for the generated rules
+	 * @param toRuleTransformer
+	 * 		transforms a {@link Result} to a stream of {@link DependencyRule}s
+	 * @param toLinesTransformer
+	 * 		transforms dependency rules to lines
+	 * @param writer
+	 * 		writes lines to a file
 	 */
-	public RuleOutputStrategy(Consumer<DependencyRule> ruleOutput) {
-		this.ruleOutput = requireNonNull(ruleOutput, "The argument 'ruleOutput' must not be null.");
+	public RuleOutputStrategy(
+			Function<Result, Stream<DependencyRule>> toRuleTransformer,
+			Function<DependencyRule, Stream<String>> toLinesTransformer,
+			Writer writer) {
+		this.toRuleTransformer =
+				requireNonNull(toRuleTransformer, "The argument 'toRuleTransformer' must not be null.");
+		this.toLinesTransformer =
+				requireNonNull(toLinesTransformer, "The argument 'toLinesTransformer' must not be null.");
+		this.writer = requireNonNull(writer, "The argument 'writer' must not be null.");
 	}
 
 	@Override
 	public void output(Result result) throws MojoFailureException {
-		requireNonNull(result, "The argument 'result' must not be null.");
-		Severity.stream()
-				.flatMap(severity -> dependencyRulesForSeverity(result, severity))
-				.sorted(comparing(DependencyRule::getDependent)
-						.thenComparing(DependencyRule::getSeverity))
-				.forEachOrdered(ruleOutput);
+		Stream<String> lines = getDependencyRuleLines(result);
+		writeDependencyRuleLines(lines);
 	}
 
-	private static Stream<DependencyRule> dependencyRulesForSeverity(Result result, Severity severity) {
-		return result
-				.violationsWithSeverity(severity)
-				.flatMap(violation -> dependencyRulesForViolation(severity, violation));
+	private Stream<String> getDependencyRuleLines(Result result) {
+		return toRuleTransformer
+				.apply(result)
+				.sorted(comparing(DependencyRule::getDependent).thenComparing(DependencyRule::getSeverity))
+				.flatMap(toLinesTransformer);
 	}
 
-	private static Stream<DependencyRule> dependencyRulesForViolation(Severity severity, Violation violation) {
-		return violation
-				.getInternalDependencies().stream()
-				.map(dependency ->
-						DependencyRule.of(
-								violation.getDependent().getFullyQualifiedName(),
-								dependency.getFullyQualifiedName(),
-								severity));
+	private void writeDependencyRuleLines(Stream<String> dependencyRuleLines) throws MojoFailureException {
+		try {
+			writer.write(dependencyRuleLines);
+		} catch (IOException ex) {
+			throw new MojoFailureException(ex.getMessage(), ex.getCause());
+		}
+	}
+
+	/**
+	 * Writes a stream of lines to a file.
+	 */
+	public interface Writer {
+
+		void write(Stream<String> lines) throws IOException;
+
 	}
 
 }

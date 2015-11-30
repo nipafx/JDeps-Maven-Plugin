@@ -6,55 +6,46 @@ import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.codefx.maven.plugin.jdeps.Factory.violation;
+import static org.codefx.maven.plugin.jdeps.result.ViolationsToRuleTransformer.transform;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests {@link RuleOutputStrategy}.
+ * Tests {@link ViolationsToRuleTransformer}.
  */
-public class RuleOutputStrategyTest {
+public class ViolationsToRuleTransformerTest {
 
-	private RuleOutputStrategy output;
 	private Result result;
-	private List<DependencyRule> createdRules;
 
 	@Before
-	@SuppressWarnings("unchecked")
 	public void setUp() {
-		createdRules = new ArrayList<>();
-		output = new RuleOutputStrategy(createdRules::add);
 		result = mock(Result.class);
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void create_ruleOutputNull_throwsException() {
-		new RuleOutputStrategy(null);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void output_resultNull_throwsException() throws MojoFailureException {
-		output.output(null);
+	public void transform_resultNull_throwsException() throws MojoFailureException {
+		transform(null);
 	}
 
 	@Test
-	public void output_resultEmpty_outputEmpty() throws Exception {
+	public void transform_resultEmpty_outputEmpty() throws Exception {
 		when(result.violationsWithSeverity(any()))
 				.then(ignored -> Stream.empty());
 
-		output.output(result);
+		List<DependencyRule> rules = transform(result).collect(toList());
 
-		assertThat(createdRules).isEmpty();
+		assertThat(rules).isEmpty();
 	}
 
 	@Test
-	public void output_oneViolationPerSeverity_outputAllViolations() throws Exception {
+	public void transform_oneViolationPerSeverity_outputAllViolations() throws Exception {
 		when(result.violationsWithSeverity(Severity.IGNORE))
 				.thenReturn(Stream.of(violation("org.Ignore", "sun.Ignore")));
 		when(result.violationsWithSeverity(Severity.SUMMARIZE))
@@ -66,9 +57,9 @@ public class RuleOutputStrategyTest {
 		when(result.violationsWithSeverity(Severity.FAIL))
 				.thenReturn(Stream.of(violation("org.Fail", "sun.Fail")));
 
-		output.output(result);
+		List<DependencyRule> rules = transform(result).collect(toList());
 
-		assertThat(createdRules).containsOnly(
+		assertThat(rules).containsOnly(
 				DependencyRule.of("org.Ignore", "sun.Ignore", Severity.IGNORE),
 				DependencyRule.of("org.Summarize", "sun.Summarize", Severity.SUMMARIZE),
 				DependencyRule.of("org.Inform", "sun.Inform", Severity.INFORM),
@@ -78,38 +69,18 @@ public class RuleOutputStrategyTest {
 	}
 
 	@Test
-	public void output_oneViolationWithManyDependencies_outputContainsOneRulePerDependency() throws Exception {
+	public void transform_oneViolationWithManyDependencies_outputContainsOneRulePerDependency() throws Exception {
 		when(result.violationsWithSeverity(any()))
 				.then(ignored -> Stream.empty());
 		when(result.violationsWithSeverity(Severity.IGNORE))
 				.thenReturn(Stream.of(violation("org.A", "sun.X", "sun.Y", "sun.Z")));
 
-		output.output(result);
+		List<DependencyRule> rules = transform(result).collect(toList());
 
-		assertThat(createdRules).containsOnly(
+		assertThat(rules).containsOnly(
 				DependencyRule.of("org.A", "sun.X", Severity.IGNORE),
 				DependencyRule.of("org.A", "sun.Y", Severity.IGNORE),
 				DependencyRule.of("org.A", "sun.Z", Severity.IGNORE)
-		);
-	}
-
-	@Test
-	public void output_manyViolations_outputSortedByDependantName() throws Exception {
-		when(result.violationsWithSeverity(any()))
-				.then(ignored -> Stream.empty());
-		when(result.violationsWithSeverity(Severity.IGNORE))
-				.thenReturn(Stream.of(
-						violation("org.C", "sun.X"),
-						violation("org.A", "sun.Z"),
-						violation("org.B", "sun.Y")
-				));
-
-		output.output(result);
-
-		assertThat(createdRules).containsExactly(
-				DependencyRule.of("org.A", "sun.Z", Severity.IGNORE),
-				DependencyRule.of("org.B", "sun.Y", Severity.IGNORE),
-				DependencyRule.of("org.C", "sun.X", Severity.IGNORE)
 		);
 	}
 
