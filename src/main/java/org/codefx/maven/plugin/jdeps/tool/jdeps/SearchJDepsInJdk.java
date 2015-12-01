@@ -1,10 +1,10 @@
-package org.codefx.maven.plugin.jdeps.tool;
+package org.codefx.maven.plugin.jdeps.tool.jdeps;
+
+import org.apache.commons.lang3.SystemUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-
-import org.apache.commons.lang3.SystemUtils;
 
 /**
  * Tries to locate JDeps inside the JDK folder.

@@ -1,7 +1,5 @@
-package org.codefx.maven.plugin.jdeps.mojo;
+package org.codefx.maven.plugin.jdeps.rules;
 
-import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
-import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 
 import java.util.stream.Stream;
@@ -12,7 +10,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * A dependency rule {@code (Dependent -> Dependency: Severity)} defined in full XML.
  * <p>
- * This class is mainly used as a vehicle for the Mojo's configuration parameters. Note that it must be {@code public},
+ * This class is used as a vehicle for the Mojo's configuration parameters. Note that it must be {@code public},
  * requires a parameterless constructor and that changing its name or the name of its fields would break existing
  * configurations.
  */
@@ -32,7 +30,7 @@ public class XmlRule {
 	/**
 	 * Creates a new XML rule {@code dependent -> dependency: severity}.
 	 */
-	XmlRule(String dependent, String dependency, Severity severity) {
+	public XmlRule(String dependent, String dependency, Severity severity) {
 		this.dependent = requireNonNull(dependent, "The argument 'dependent' must not be null.");
 		this.dependency = requireNonNull(dependency, "The argument 'dependency' must not be null.");
 		this.severity = requireNonNull(severity, "The argument 'severity' must not be null.");
@@ -44,7 +42,7 @@ public class XmlRule {
 	 * @param dependencyRule
 	 * 		the rule to create an XML rule from
 	 */
-	XmlRule(DependencyRule dependencyRule) {
+	public XmlRule(DependencyRule dependencyRule) {
 		dependent = dependencyRule.getDependent();
 		dependency = dependencyRule.getDependency();
 		severity = dependencyRule.getSeverity();

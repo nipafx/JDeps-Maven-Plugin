@@ -4,9 +4,9 @@ import org.codefx.maven.plugin.jdeps.parse.ViolationParser;
 import org.codefx.maven.plugin.jdeps.result.Result;
 import org.codefx.maven.plugin.jdeps.result.ResultBuilder;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudge;
-import org.codefx.maven.plugin.jdeps.tool.ComposedJDepsSearch;
-import org.codefx.maven.plugin.jdeps.tool.JDepsSearch;
-import org.codefx.maven.plugin.jdeps.tool.JdkInternalsExecutor;
+import org.codefx.maven.plugin.jdeps.tool.jdeps.ComposedJDepsSearch;
+import org.codefx.maven.plugin.jdeps.tool.jdeps.JDepsSearch;
+import org.codefx.maven.plugin.jdeps.tool.jdeps.JdkInternalsExecutor;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 import org.codehaus.plexus.util.cli.CommandLineException;
 

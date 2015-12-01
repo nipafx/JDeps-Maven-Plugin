@@ -1,7 +1,11 @@
-package org.codefx.maven.plugin.jdeps.mojo;
+package org.codefx.maven.plugin.jdeps.result;
 
 import com.google.common.collect.ImmutableList;
+import org.codefx.maven.plugin.jdeps.rules.Arrow;
+import org.codefx.maven.plugin.jdeps.rules.ArrowRuleParser;
 import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
+import org.codefx.maven.plugin.jdeps.rules.XmlRule;
+import org.codefx.maven.plugin.jdeps.tool.LineWriter.StaticContent;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -75,38 +79,9 @@ public enum RuleOutputFormat {
 			case ON:
 				return rule -> Stream.of(ArrowRuleParser.ruleToArrowString(Arrow.ON, rule));
 			case XML:
-				return rule -> new XmlRule(rule).toXmlLines(staticContent.ruleIndent);
+				return rule -> new XmlRule(rule).toXmlLines(staticContent.indent);
 			default:
 				throw new IllegalArgumentException(format("Unknown format '%s'.", this));
-		}
-	}
-
-	/**
-	 * Defines some static content for the rule output.
-	 */
-	public static class StaticContent {
-
-		/**
-		 * The file must start with these lines.
-		 */
-		public final ImmutableList<String> fileProlog;
-
-		/**
-		 * The file must end with these lines.
-		 */
-		public final ImmutableList<String> fileEpilog;
-
-		/**
-		 * This indent is to be added before each rule.
-		 */
-		public final String ruleIndent;
-
-		private StaticContent(ImmutableList<String> fileProlog, ImmutableList<String> fileEpilog, String ruleIndent) {
-			this.fileProlog = requireNonNull(fileProlog, "The argument 'fileProlog' must not be null.");
-			this.fileEpilog = requireNonNull(fileEpilog, "The argument 'fileEpilog' must not be null.");
-			this.ruleIndent = requireNonNull(ruleIndent, "The argument 'ruleIndent' must not be null.");
-			if (!ruleIndent.trim().isEmpty())
-				throw new IllegalArgumentException("The argument 'ruleIndent' must only consist of whitespace.");
 		}
 	}
 

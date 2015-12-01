@@ -15,28 +15,28 @@ import static java.util.Objects.requireNonNull;
  */
 public class RuleOutputStrategy implements ResultOutputStrategy {
 
-	private final Function<Result, Stream<DependencyRule>> toRuleTransformer;
-	private final Function<DependencyRule, Stream<String>> toLinesTransformer;
+	private final Function<Result, Stream<DependencyRule>> getRulesFromResult;
+	private final Function<DependencyRule, Stream<String>> convertRuleToLines;
 	private final Writer writer;
 
 	/**
 	 * Creates a new output strategy, relying on the specified functions to do most of the work.
 	 *
-	 * @param toRuleTransformer
+	 * @param getRulesFromResult
 	 * 		transforms a {@link Result} to a stream of {@link DependencyRule}s
-	 * @param toLinesTransformer
+	 * @param convertRuleToLines
 	 * 		transforms dependency rules to lines
 	 * @param writer
 	 * 		writes lines to a file
 	 */
 	public RuleOutputStrategy(
-			Function<Result, Stream<DependencyRule>> toRuleTransformer,
-			Function<DependencyRule, Stream<String>> toLinesTransformer,
+			Function<Result, Stream<DependencyRule>> getRulesFromResult,
+			Function<DependencyRule, Stream<String>> convertRuleToLines,
 			Writer writer) {
-		this.toRuleTransformer =
-				requireNonNull(toRuleTransformer, "The argument 'toRuleTransformer' must not be null.");
-		this.toLinesTransformer =
-				requireNonNull(toLinesTransformer, "The argument 'toLinesTransformer' must not be null.");
+		this.getRulesFromResult =
+				requireNonNull(getRulesFromResult, "The argument 'getRulesFromResult' must not be null.");
+		this.convertRuleToLines =
+				requireNonNull(convertRuleToLines, "The argument 'convertRuleToLines' must not be null.");
 		this.writer = requireNonNull(writer, "The argument 'writer' must not be null.");
 	}
 
@@ -47,10 +47,10 @@ public class RuleOutputStrategy implements ResultOutputStrategy {
 	}
 
 	private Stream<String> getDependencyRuleLines(Result result) {
-		return toRuleTransformer
+		return getRulesFromResult
 				.apply(result)
 				.sorted(comparing(DependencyRule::getDependent).thenComparing(DependencyRule::getSeverity))
-				.flatMap(toLinesTransformer);
+				.flatMap(convertRuleToLines);
 	}
 
 	private void writeDependencyRuleLines(Stream<String> dependencyRuleLines) throws MojoFailureException {

@@ -1,5 +1,6 @@
 package org.codefx.maven.plugin.jdeps.mojo;
 
+import org.codefx.maven.plugin.jdeps.rules.ArrowRuleParser;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudge;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudgeBuilder;
 import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
@@ -7,6 +8,7 @@ import org.codefx.maven.plugin.jdeps.rules.MapDependencyJudge.MapDependencyJudge
 import org.codefx.maven.plugin.jdeps.rules.PackageInclusion;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.codefx.maven.plugin.jdeps.rules.SimpleDependencyJudge;
+import org.codefx.maven.plugin.jdeps.rules.XmlRule;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 
 import java.util.List;
@@ -20,6 +22,12 @@ import static org.codefx.maven.plugin.jdeps.mojo.MojoLogging.logger;
  * according {@link DependencyJudge}.
  */
 class DependencyRulesConfiguration {
+
+	/*
+	 * It looks like this class belongs into 'org.codefx.maven.plugin.jdeps.rules' (look at the imports) but
+	 * stupid logging is in the way. I'd rather have a class that, in spirit, belongs somewhere else hang around here
+	 * than introduce Maven-specific logging into the other package.
+	 */
 
 	private final Severity defaultSeverity;
 	private final PackageInclusion packageInclusion;
@@ -70,6 +78,7 @@ class DependencyRulesConfiguration {
 			throws ConfigurationException {
 		logStartAddingRules(arrowRules, "Arrow");
 
+		// the loop can be no stream because 'ArrowRuleParser.parseRules' throws a checked exception
 		for (String arrowRule : arrowRules) {
 			ArrowRuleParser
 					.parseRules(arrowRule)

@@ -1,8 +1,6 @@
-package org.codefx.maven.plugin.jdeps.mojo;
+package org.codefx.maven.plugin.jdeps.rules;
 
 import com.google.common.collect.ImmutableList;
-import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
-import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,8 +9,8 @@ import org.junit.rules.ExpectedException;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.codefx.maven.plugin.jdeps.mojo.ArrowRuleParser.parseRules;
-import static org.codefx.maven.plugin.jdeps.mojo.ArrowRuleParser.ruleToArrowString;
+import static org.codefx.maven.plugin.jdeps.rules.ArrowRuleParser.parseRules;
+import static org.codefx.maven.plugin.jdeps.rules.ArrowRuleParser.ruleToArrowString;
 
 /**
  * Tests {@link ArrowRuleParser}.

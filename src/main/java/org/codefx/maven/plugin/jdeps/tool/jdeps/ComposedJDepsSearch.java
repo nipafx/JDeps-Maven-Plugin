@@ -1,4 +1,4 @@
-package org.codefx.maven.plugin.jdeps.tool;
+package org.codefx.maven.plugin.jdeps.tool.jdeps;
 
 import java.nio.file.Path;
 import java.util.Optional;

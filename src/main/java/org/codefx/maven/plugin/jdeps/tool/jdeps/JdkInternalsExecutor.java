@@ -1,4 +1,4 @@
-package org.codefx.maven.plugin.jdeps.tool;
+package org.codefx.maven.plugin.jdeps.tool.jdeps;
 
 import org.codefx.maven.plugin.jdeps.parse.ViolationParser;
 import org.codehaus.plexus.util.cli.CommandLineException;

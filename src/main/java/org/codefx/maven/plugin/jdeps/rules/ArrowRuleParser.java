@@ -1,7 +1,6 @@
-package org.codefx.maven.plugin.jdeps.mojo;
+package org.codefx.maven.plugin.jdeps.rules;
 
 import com.google.common.collect.ImmutableList;
-import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 
 import java.util.Optional;
@@ -16,7 +15,7 @@ import static java.util.Objects.requireNonNull;
  * Parses rules of the form
  * {@code com.foo.Bar -> sun.misc.Unsafe: WARN} and {@code com.fo.Bar on sun.misc.Unsafe: WARN}.
  */
-class ArrowRuleParser {
+public class ArrowRuleParser {
 
 	private static final String ERROR_MESSAGE_LINE_INVALID_RULE = "The line '%s' defines no valid rule.";
 	private static final String ERROR_MESSAGE_MULTIPLE_RULES =

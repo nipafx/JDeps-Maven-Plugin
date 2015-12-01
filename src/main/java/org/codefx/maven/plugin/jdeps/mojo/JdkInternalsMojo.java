@@ -7,8 +7,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codefx.maven.plugin.jdeps.result.Result;
 import org.codefx.maven.plugin.jdeps.result.ResultOutputStrategy;
+import org.codefx.maven.plugin.jdeps.result.RuleOutputFormat;
 import org.codefx.maven.plugin.jdeps.rules.PackageInclusion;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
+import org.codefx.maven.plugin.jdeps.rules.XmlRule;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 import org.codehaus.plexus.util.cli.CommandLineException;
 

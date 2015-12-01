@@ -3,6 +3,7 @@ package org.codefx.maven.plugin.jdeps.mojo;
 import org.codefx.maven.plugin.jdeps.rules.DependencyJudgeBuilder;
 import org.codefx.maven.plugin.jdeps.rules.DependencyRule;
 import org.codefx.maven.plugin.jdeps.rules.Severity;
+import org.codefx.maven.plugin.jdeps.rules.XmlRule;
 import org.codehaus.plexus.classworlds.launcher.ConfigurationException;
 import org.junit.Before;
 import org.junit.Test;

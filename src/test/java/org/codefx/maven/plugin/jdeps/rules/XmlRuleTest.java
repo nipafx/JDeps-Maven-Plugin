@@ -1,7 +1,6 @@
-package org.codefx.maven.plugin.jdeps.mojo;
+package org.codefx.maven.plugin.jdeps.rules;
 
 import org.assertj.core.api.Condition;
-import org.codefx.maven.plugin.jdeps.rules.Severity;
 import org.junit.Test;
 
 import java.util.List;

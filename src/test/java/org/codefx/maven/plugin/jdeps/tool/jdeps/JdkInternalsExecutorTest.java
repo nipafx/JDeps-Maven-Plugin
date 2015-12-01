@@ -1,4 +1,4 @@
-package org.codefx.maven.plugin.jdeps.tool;
+package org.codefx.maven.plugin.jdeps.tool.jdeps;
 
 import com.google.common.io.Resources;
 import org.junit.Ignore;

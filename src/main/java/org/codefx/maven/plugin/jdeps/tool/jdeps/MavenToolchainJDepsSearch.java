@@ -1,10 +1,10 @@
-package org.codefx.maven.plugin.jdeps.tool;
+package org.codefx.maven.plugin.jdeps.tool.jdeps;
+
+import org.apache.maven.toolchain.Toolchain;
 
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.apache.maven.toolchain.Toolchain;
 
 /**
  * Tries to locate JDeps in the JDK specified to the Maven Toolchain.

@@ -1,4 +1,4 @@
-package org.codefx.maven.plugin.jdeps.mojo;
+package org.codefx.maven.plugin.jdeps.rules;
 
 import java.util.Arrays;
 
@@ -7,7 +7,7 @@ import static java.util.stream.Collectors.joining;
 /**
  * The different visualisations of an arrow in arrow rules like {@code dependent -> dependency: severity}.
  */
-enum Arrow {
+public enum Arrow {
 
 	ARROW("->"),
 	ON("on");

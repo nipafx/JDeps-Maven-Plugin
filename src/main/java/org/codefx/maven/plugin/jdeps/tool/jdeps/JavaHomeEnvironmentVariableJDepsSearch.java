@@ -1,10 +1,10 @@
-package org.codefx.maven.plugin.jdeps.tool;
+package org.codefx.maven.plugin.jdeps.tool.jdeps;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Tries to locate jdeps via the environment variable "JAVA_HOME".
