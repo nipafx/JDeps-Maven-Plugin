@@ -5,8 +5,8 @@ import org.codefx.mvn.jdeps.result.LogResultOutputStrategy;
 import org.codefx.mvn.jdeps.result.ResultOutputStrategy;
 import org.codefx.mvn.jdeps.result.RuleOutputFormat;
 import org.codefx.mvn.jdeps.result.RuleOutputStrategy;
+import org.codefx.mvn.jdeps.result.RuleOutputStrategy.Writer;
 import org.codefx.mvn.jdeps.result.ViolationsToRuleTransformer;
-import org.codefx.mvn.jdeps.rules.DependencyRule;
 import org.codefx.mvn.jdeps.tool.LineWriter;
 import org.codefx.mvn.jdeps.tool.LineWriter.IfFileExists;
 import org.codefx.mvn.jdeps.tool.LineWriter.StaticContent;
@@ -14,10 +14,9 @@ import org.codefx.mvn.jdeps.tool.LineWriter.StaticContent;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
+import static org.codefx.mvn.jdeps.mojo.MojoLogging.logger;
 
 class OutputConfiguration {
 
@@ -45,18 +44,24 @@ class OutputConfiguration {
 			logResult.output(result);
 			outputRulesOrFailBuild.output(result);
 		};
-
 	}
 
 	private ResultOutputStrategy createRuleOutputStrategy() {
 		StaticContent outputFormatStaticContent = format.getStaticContent(DEFAULT_INDENT);
+		return new RuleOutputStrategy(
+				ViolationsToRuleTransformer::transform,
+				format.getToLinesTransformer(outputFormatStaticContent),
+				createLineWriter(outputFormatStaticContent));
+	}
 
-		Function<DependencyRule, Stream<String>> toLinesTransformer =
-				format.getToLinesTransformer(outputFormatStaticContent);
-		LineWriter writer = new LineWriter(
-				getFile(filePath), IfFileExists.APPEND_NEW_CONTENT, outputFormatStaticContent);
-
-		return new RuleOutputStrategy(ViolationsToRuleTransformer::transform, toLinesTransformer, writer::write);
+	private Writer createLineWriter(StaticContent outputFormatStaticContent) {
+		Path file = getFile(filePath);
+		LineWriter lineWriter = new LineWriter(file, IfFileExists.APPEND_NEW_CONTENT, outputFormatStaticContent);
+		return lines -> {
+			logger().debug(String.format("Starting to write rules to '%s' ...", file));
+			lineWriter.write(lines);
+			logger().info(String.format("Rules were written to '%s'.", file));
+		};
 	}
 
 	private static Path getFile(String path) {

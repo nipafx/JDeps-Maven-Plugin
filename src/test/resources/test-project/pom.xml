@@ -47,10 +47,8 @@
 									org.codefx.mvn.jdeps.testproject -> sun.misc.Unsafe: FAIL
 								</arrowRules>
 							</arrowDependencyRules>
-<!--
 							<outputRulesForViolations>true</outputRulesForViolations>
 							<outputRuleFormat>ARROW</outputRuleFormat>
--->
 						</configuration>
 						<goals>
 							<goal>jdkinternals</goal>
