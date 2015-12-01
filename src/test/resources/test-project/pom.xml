@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.codefx.maven.plugin</groupId>
+	<groupId>org.codefx.mvn</groupId>
 	<artifactId>jdeps-maven-plugin-test</artifactId>
 	<version>1-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -26,28 +26,31 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.codefx.maven.plugin</groupId>
+				<groupId>org.codefx.mvn</groupId>
 				<artifactId>jdeps-maven-plugin</artifactId>
 				<version>0.2-SNAPSHOT</version>
 				<executions>
 					<execution>
 						<configuration>
 							<defaultSeverity>WARN</defaultSeverity>
+							<packages>HIERARCHICAL</packages>
 							<xmlDependencyRules>
 								<xmlRule>
-									<dependent>org.codefx.maven.plugin.testproject</dependent>
-									<dependency>sun.misc</dependency>
+									<dependent>org.codefx.mvn.jdeps.testproject</dependent>
+									<dependency>sun.misc.BASE64Encoder</dependency>
 									<severity>INFORM</severity>
 								</xmlRule>
 							</xmlDependencyRules>
 							<arrowDependencyRules>
 								<arrowRules>
-									org.codefx.maven.plugin.testproject -> sun.misc.Unsafe: FAIL
+									org.codefx.mvn.jdeps.testproject -> sun.security: SUMMARIZE
+									org.codefx.mvn.jdeps.testproject -> sun.misc.Unsafe: FAIL
 								</arrowRules>
 							</arrowDependencyRules>
+<!--
 							<outputRulesForViolations>true</outputRulesForViolations>
-							<outputRuleFormat>ON</outputRuleFormat>
-							<outputFilePath>/home/nipa/Code/JDeps-Maven-Plugin/src/test/resources/test-project/rules.xml</outputFilePath>
+							<outputRuleFormat>ARROW</outputRuleFormat>
+-->
 						</configuration>
 						<goals>
 							<goal>jdkinternals</goal>

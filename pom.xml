@@ -4,7 +4,7 @@
 
 	<!-- PROJECT COORDINATES -->
 
-	<groupId>org.codefx.maven.plugin</groupId>
+	<groupId>org.codefx.mvn</groupId>
 	<artifactId>jdeps-maven-plugin</artifactId>
 	<version>0.2-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
