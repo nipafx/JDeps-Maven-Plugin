@@ -1,6 +1,7 @@
 package org.codefx.mvn.jdeps.mojo;
 
-import org.codefx.mvn.jdeps.result.MojoOutputStrategy;
+import org.codefx.mvn.jdeps.result.FailBuildResultOutputStrategy;
+import org.codefx.mvn.jdeps.result.LogResultOutputStrategy;
 import org.codefx.mvn.jdeps.result.ResultOutputStrategy;
 import org.codefx.mvn.jdeps.result.RuleOutputFormat;
 import org.codefx.mvn.jdeps.result.RuleOutputStrategy;
@@ -35,10 +36,16 @@ class OutputConfiguration {
 	}
 
 	public ResultOutputStrategy createOutputStrategy() {
-		if (outputRules)
-			return createRuleOutputStrategy();
-		else
-			return createMojoOutputStrategy();
+		LogResultOutputStrategy logResult = new LogResultOutputStrategy();
+		ResultOutputStrategy outputRulesOrFailBuild =
+				outputRules ? createRuleOutputStrategy() : createFailingStrategy();
+
+		// always log the result before doing anything else
+		return result -> {
+			logResult.output(result);
+			outputRulesOrFailBuild.output(result);
+		};
+
 	}
 
 	private ResultOutputStrategy createRuleOutputStrategy() {
@@ -60,8 +67,8 @@ class OutputConfiguration {
 			return outputFile;
 	}
 
-	private ResultOutputStrategy createMojoOutputStrategy() {
-		return new MojoOutputStrategy();
+	private ResultOutputStrategy createFailingStrategy() {
+		return new FailBuildResultOutputStrategy();
 	}
 
 }
