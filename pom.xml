@@ -6,7 +6,7 @@
 
 	<groupId>org.codefx.mvn</groupId>
 	<artifactId>jdeps-maven-plugin</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.2</version>
 	<packaging>maven-plugin</packaging>
 
 	<!-- PROJECT META INFORMATION -->
