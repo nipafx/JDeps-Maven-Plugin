@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.codefx.mvn</groupId>
+	<artifactId>jdeps-maven-plugin-test</artifactId>
+	<version>1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>JDepsMavenPlugin-Test</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<!-- specify using Java 8 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codefx.mvn</groupId>
+				<artifactId>jdeps-maven-plugin</artifactId>
+				<version>0.2-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<configuration>
+							<defaultSeverity>WARN</defaultSeverity>
+							<packages>HIERARCHICAL</packages>
+							<xmlDependencyRules>
+								<xmlRule>
+									<dependent>org.codefx.mvn.jdeps.testproject</dependent>
+									<dependency>sun.misc.BASE64Encoder</dependency>
+									<severity>INFORM</severity>
+								</xmlRule>
+							</xmlDependencyRules>
+							<arrowDependencyRules>
+								<arrowRules>
+									org.codefx.mvn.jdeps.testproject -> sun.security: SUMMARIZE
+									org.codefx.mvn.jdeps.testproject -> sun.misc.Unsafe: FAIL
+								</arrowRules>
+							</arrowDependencyRules>
+							<outputRulesForViolations>false</outputRulesForViolations>
+							<outputRuleFormat>ARROW</outputRuleFormat>
+						</configuration>
+						<goals>
+							<goal>jdkinternals</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

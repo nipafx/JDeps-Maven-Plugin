@@ -1,3 +1,5 @@
+:boom: **This documentation is for the outdated version 0.1 - it will be upgraded to 0.2 soon.** :boom:
+
 # JDeps Maven Plugin
 
 This Maven plugin employs [JDeps](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jdeps.html) to fail a build when dependencies on [JDK-internal APIs](https://wiki.openjdk.java.net/display/JDK8/Java+Dependency+Analysis+Tool) are discovered.
