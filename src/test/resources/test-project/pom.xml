@@ -47,7 +47,7 @@
 									org.codefx.mvn.jdeps.testproject -> sun.misc.Unsafe: FAIL
 								</arrowRules>
 							</arrowDependencyRules>
-							<outputRulesForViolations>true</outputRulesForViolations>
+							<outputRulesForViolations>false</outputRulesForViolations>
 							<outputRuleFormat>ARROW</outputRuleFormat>
 						</configuration>
 						<goals>
