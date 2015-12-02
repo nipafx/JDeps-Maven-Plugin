@@ -8,10 +8,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static java.lang.Integer.min;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Stream.concat;
 
 /**
  * A violation is a dependency of a class on another class which is marked as JDK-internal API by jdeps.
@@ -143,15 +145,27 @@ public final class Violation implements Comparable<Violation> {
 	}
 
 	/**
-	 * @return a string representation of a violation which spans multiple lines
+	 * @return a representation of this violation that spans multiple lines
 	 */
-	public String toMultiLineString() {
-		String dependentLine = ".\t" + dependent + "\n";
-		String dependencyLineStart = ".\t\t -> ";
-		return dependentLine +
+	public Stream<String> toLines() {
+		return toLines("    ", "     -> ");
+	}
+
+	/**
+	 * @param allPrefix
+	 * 		the prefix before all lines; maybe an indent
+	 * @param dependencyPrefix
+	 * 		the prefix before the lines listing the dependencies; maybe an additional indent and an arrow
+	 *
+	 * @return a representation of this violation that spans multiple lines
+	 */
+	public Stream<String> toLines(String allPrefix, String dependencyPrefix) {
+		return concat(
+				Stream.of(allPrefix + dependent),
 				sortedInternalDependencies.stream()
-						.map(Object::toString)
-						.collect(joining("\n" + dependencyLineStart, dependencyLineStart, ""));
+						.map(InternalType::toString)
+						.map(dependency -> allPrefix + dependencyPrefix + dependency)
+		);
 	}
 
 	// #end COMPARETO, EQUALS, HASHCODE, TOSTRING

@@ -21,7 +21,7 @@ public class SystemOutResultOutputStrategy implements ResultOutputStrategy {
 	private static void output(String header, Stream<Violation> violations) {
 		System.out.println("\n\n" + header + ":");
 		violations
-				.map(Violation::toMultiLineString)
+				.flatMap(Violation::toLines)
 				.forEach(System.out::println);
 	}
 
