@@ -13,13 +13,25 @@ Redemption comes in four easy steps:
 3. prevent relapses
 4. do the same for your dependencies
 
-This plugin helps with :one: and :three:, :two: shouldn't be too hard but :four: might be.
+This plugin helps with :one: and :three:, :two: shouldn't be too hard in most cases but :four: might be.
+
+## How Does It Help? :sparkles:
 
 Running `jdeps -jdkinternals` against the compiled classes it will **discover dependencies** on internal APIs.
 But it not only runs JDeps, it also understands its output, which allows a **convenient and detailed configuration** of when exactly the **build should break**.
 This enables a **self-paced migration** away from problematic dependencies with immediate **failure on relapses**.
 
-## Quick Start
+Since _JDeps Mvn_ actually **understands JDeps**, it is straight forward to define flexible rules for how dependencies are treated. So you have this package where the use of `sun.misc` is generally ok except for the one subpackage where everything but `Unsafe` could already be removed and must not creep back? No problem:
+
+```xml
+org.food -> sun.misc: WARN
+org.food.fruit -> sun.misc: FAIL
+org.food.fruit -> sun.misc.Unsafe: WARN
+```
+
+You find it too tedious to write all these rules by hand? Also no problem. Check out the [walkthrough](https://github.com/CodeFX-org/JDeps-Maven-Plugin/wiki/Walkthrough) for more on rules, including how to create them automatically.
+
+## Quick Start :rocket:
 
 To get a first impression how you're doing JDK-internal-wise simply run _JDeps Mvn_:
 
@@ -56,11 +68,11 @@ mvn clean compile jdeps:jdkinternals # just this plugin
 mvn verify # everything up to the phase in which this plugin runs
 ```
 
-## More Documentation :anger:
+## Next steps :anger:
 
 But we're all too good in ignoring log messages so check out the [walkthrough](https://github.com/CodeFX-org/JDeps-Maven-Plugin/wiki/Walkthrough) and the rest of the [wiki](https://github.com/CodeFX-org/JDeps-Maven-Plugin/wiki) for information on how to advance to the next level.
 
-## Contact
+## Contact :eyes:
 
 Nicolai Parlog <br>
 CodeFX
